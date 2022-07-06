@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 48b4f3e3dd67f544a9087ed11e0c01c6
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: USER,FNO_LIGHTMAP,FDISABLE_BATCHING,FCOLORMASK,FCOLORMASK_REPLACE,FMASK_MAINTEX,fnoforwardadd,fnovertexlights,fnolightmap,fnofog,fnoambient,KSHADER_TARGET:3.0,KCOLORMASK:mainTex,KCOLORMASK_CHANNEL:.a,chBC607950,cSM:30,cCF:TCP2_ShaderTemplate_Default
+  assetBundleName: 
+  assetBundleVariant: 
