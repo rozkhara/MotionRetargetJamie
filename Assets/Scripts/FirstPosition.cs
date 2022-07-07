@@ -32,9 +32,12 @@ public class FirstPosition : MonoBehaviour
             lineData[i] = lineData[i].Replace(")", "");
             sData[i] = lineData[i].Split(" ");
         }
-        for (int i = 0; i < 17; i++)
+        newTransform.Add(new Vector3(float.Parse(sData[0][2]) / 1000, float.Parse(sData[0][4]) / 1000, float.Parse(sData[0][3]) / 1000));
+        newTransform[0] += childNodes[0].position;
+        for (int i = 1; i < 17; i++)
         {
             newTransform.Add(new Vector3(float.Parse(sData[i][2]) / 1000, float.Parse(sData[i][4]) / 1000, float.Parse(sData[i][3]) / 1000));
+            newTransform[i] = newTransform[0] + newTransform[i];
         }
         foreach (Transform child in childNodes)
         {
@@ -118,6 +121,7 @@ public class FirstPosition : MonoBehaviour
                     lineData[index * 17 + i] = lineData[index * 17 + i].Replace(")", "");
                     sData[i] = lineData[index * 17 + i].Split(" ");
                 }
+
                 for (int i = 0; i < 17; i++)
                 {
                     if (newTransform[i] == null)
@@ -127,6 +131,14 @@ public class FirstPosition : MonoBehaviour
                     else
                     {
                         newTransform[i] = new Vector3(float.Parse(sData[i][2]) / 1000, float.Parse(sData[i][4]) / 1000, float.Parse(sData[i][3]) / 1000);
+                        if (i != 0)
+                        {
+                            newTransform[i] = newTransform[0] + newTransform[i];
+                        }
+                        else
+                        {
+                            newTransform[i] += childNodes[0].position;
+                        }
                         Debug.Log("newTransform updated");
                     }
                 }
