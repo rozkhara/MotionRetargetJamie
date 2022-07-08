@@ -12,13 +12,10 @@ public class FirstPosition : MonoBehaviour
 
     public Transform rootNode;
     public Transform[] childNodes;
-    public string dataChunk;
     public string[][] sData = new string[JOINTCOUNT][];
     public List<Vector3> newTransform;
-    private int index = 0;
-    private int frameNum = 0;
-    private int chunkIndex = 0;
-   
+    private bool powerSwitch = true;
+
 
     private void Awake()
     {
@@ -30,120 +27,133 @@ public class FirstPosition : MonoBehaviour
                 PopulateChildren();
             }
         }
+        Application.targetFrameRate = -1;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (true)
+        if (powerSwitch)
         {
-            index = DataProcess.Instance.GetIndex();
-            if (index < 1963)
+            if (DataProcess.Instance.index == DataProcess.Instance.refreshIndex)
             {
-                if (index % 30 == 0)
+                try
                 {
                     DataProcess.Instance.UpdateDataChunk();
+
                 }
-                DataProcess.Instance.UpdatePerJointData();
-                sData = DataProcess.Instance.GetSData();
-                chunkIndex = DataProcess.Instance.GetChunkIndex();
-                frameNum = DataProcess.Instance.GetFrameNum();
-                for (int i = 0; i < JOINTCOUNT; i++)
+                catch (System.Exception e)
                 {
-                    if (newTransform.Count <= i)
+                    Debug.Log(e.Message);
+                    powerSwitch = false;
+                    return;
+                }
+            }
+            try
+            {
+                DataProcess.Instance.UpdatePerJointData();
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log(e.Message);
+                powerSwitch = false;
+                return;
+            }
+            sData = DataProcess.Instance.GetSData();
+            for (int i = 0; i < JOINTCOUNT; i++)
+            {
+                if (newTransform.Count <= i)
+                {
+                    newTransform.Add(new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / 1000));
+                    if (i == 0)
                     {
-                        newTransform.Add(new Vector3(float.Parse(sData[chunkIndex + i][2]) / 1000, float.Parse(sData[chunkIndex + i][4]) / 1000, float.Parse(sData[chunkIndex + i][3]) / 1000));
-                        if (i == 0)
-                        {
-                            newTransform[0] += childNodes[0].position;
-                        }
-                        else
-                        {
-                            newTransform[i] = newTransform[0] + newTransform[i];
-                        }
+                        newTransform[0] += childNodes[0].position;
                     }
                     else
                     {
-                        newTransform[i] = new Vector3(float.Parse(sData[chunkIndex + i][2]) / 1000, float.Parse(sData[chunkIndex + i][4]) / 1000, float.Parse(sData[chunkIndex + i][3]) / 1000);
-                        if (i == 0)
-                        {
-                            newTransform[i] += childNodes[0].position;
-
-                        }
-                        else
-                        {
-                            newTransform[i] = newTransform[0] + newTransform[i];
-                        }
+                        newTransform[i] = newTransform[0] + newTransform[i];
                     }
                 }
-                foreach (Transform child in childNodes)
+                else
                 {
-                    if (child.name.Contains("Hips"))
+                    newTransform[i] = new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / 1000);
+                    if (i == 0)
                     {
-                        child.position = newTransform[0];
+                        newTransform[i] += childNodes[0].position;
                     }
-                    else if (child.name.Contains("Spine"))
+                    else
                     {
-                        child.position = newTransform[7];
-                    }
-                    else if (child.name.Contains("Chest"))
-                    {
-                        child.position = newTransform[8];
-                    }
-                    else if (child.name.Contains("UpperArmL"))
-                    {
-                        child.position = newTransform[14];
-                    }
-                    else if (child.name.Contains("UpperArmR"))
-                    {
-                        child.position = newTransform[11];
-                    }
-                    else if (child.name.Contains("UpperLegL"))
-                    {
-                        child.position = newTransform[1];
-                    }
-                    else if (child.name.Contains("UpperLegR"))
-                    {
-                        child.position = newTransform[4];
-                    }
-                    else if (child.name.Contains("LowerArmL"))
-                    {
-                        child.position = newTransform[15];
-                    }
-                    else if (child.name.Contains("LowerArmR"))
-                    {
-                        child.position = newTransform[12];
-                    }
-                    else if (child.name.Contains("LowerLegL"))
-                    {
-                        child.position = newTransform[2];
-                    }
-                    else if (child.name.Contains("LowerLegR"))
-                    {
-                        child.position = newTransform[5];
-                    }
-                    else if (child.name.Contains("FootL"))
-                    {
-                        child.position = newTransform[3];
-                    }
-                    else if (child.name.Contains("FootR"))
-                    {
-                        child.position = newTransform[6];
-                    }
-                    else if (child.name.Contains("HandL"))
-                    {
-                        child.position = newTransform[16];
-                    }
-                    else if (child.name.Contains("HandR"))
-                    {
-                        child.position = newTransform[13];
-                    }
-                    else if (child.name.Contains("Face"))
-                    {
-                        child.position = newTransform[10];
+                        newTransform[i] = newTransform[0] + newTransform[i];
                     }
                 }
-                DataProcess.Instance.SetIndex(index + 1);
             }
+            foreach (Transform child in childNodes)
+            {
+                if (child.name.Contains("Hips"))
+                {
+                    child.position = newTransform[0];
+                }
+                else if (child.name.Contains("Spine"))
+                {
+                    child.position = newTransform[7];
+                }
+                else if (child.name.Contains("Chest"))
+                {
+                    child.position = newTransform[8];
+                }
+                else if (child.name.Contains("UpperArmL"))
+                {
+                    child.position = newTransform[14];
+                }
+                else if (child.name.Contains("UpperArmR"))
+                {
+                    child.position = newTransform[11];
+                }
+                else if (child.name.Contains("UpperLegL"))
+                {
+                    child.position = newTransform[1];
+                }
+                else if (child.name.Contains("UpperLegR"))
+                {
+                    child.position = newTransform[4];
+                }
+                else if (child.name.Contains("LowerArmL"))
+                {
+                    child.position = newTransform[15];
+                }
+                else if (child.name.Contains("LowerArmR"))
+                {
+                    child.position = newTransform[12];
+                }
+                else if (child.name.Contains("LowerLegL"))
+                {
+                    child.position = newTransform[2];
+                }
+                else if (child.name.Contains("LowerLegR"))
+                {
+                    child.position = newTransform[5];
+                }
+                else if (child.name.Contains("FootL"))
+                {
+                    child.position = newTransform[3];
+                }
+                else if (child.name.Contains("FootR"))
+                {
+                    child.position = newTransform[6];
+                }
+                else if (child.name.Contains("HandL"))
+                {
+                    child.position = newTransform[16];
+                }
+                else if (child.name.Contains("HandR"))
+                {
+                    child.position = newTransform[13];
+                }
+                else if (child.name.Contains("Face"))
+                {
+                    child.position = newTransform[10];
+                }
+            }
+            DataProcess.Instance.index++;
         }
     }
 
