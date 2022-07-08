@@ -8,19 +8,17 @@ using System.Text;
 
 public class FirstPosition : MonoBehaviour
 {
+    private const int JOINTCOUNT = 17;
 
     public Transform rootNode;
     public Transform[] childNodes;
-    public TextAsset textA;
-    private string data;
-    public string dataChunk = "";
-    public string[] lineData;
-    private string[] temp = new string[JOINTCOUNT * 30];
+    public string dataChunk;
     public string[][] sData = new string[JOINTCOUNT][];
     public List<Vector3> newTransform;
-    private static int index = 0;
+    private int index = 0;
     private int frameNum = 0;
-    private const int JOINTCOUNT = 17;
+    private int chunkIndex = 0;
+   
 
     private void Awake()
     {
@@ -32,33 +30,28 @@ public class FirstPosition : MonoBehaviour
                 PopulateChildren();
             }
         }
-        data = textA.text.ToString();
     }
 
     private void FixedUpdate()
     {
         if (true)
         {
+            index = DataProcess.Instance.GetIndex();
             if (index < 1963)
             {
                 if (index % 30 == 0)
                 {
-                    data = data.Remove(0, dataChunk.Length + 1);
-                    lineData = data.Split("\n", JOINTCOUNT * 30 + 1);
-                    System.Array.Copy(lineData, temp, lineData.Length - 1);
-                    dataChunk = string.Join("\n", temp);
+                    DataProcess.Instance.UpdateDataChunk();
                 }
-                for (int i = 0; i < JOINTCOUNT; i++)
-                {
-                    lineData[index % 30 * 17 + i] = lineData[index % 30 * 17 + i].Replace("(", "");
-                    lineData[index % 30 * 17 + i] = lineData[index % 30 * 17 + i].Replace(")", "");
-                    sData[i] = lineData[index % 30 * 17 + i].Split(" ");
-                }
+                DataProcess.Instance.UpdatePerJointData();
+                sData = DataProcess.Instance.GetSData();
+                chunkIndex = DataProcess.Instance.GetChunkIndex();
+                frameNum = DataProcess.Instance.GetFrameNum();
                 for (int i = 0; i < JOINTCOUNT; i++)
                 {
                     if (newTransform.Count <= i)
                     {
-                        newTransform.Add(new Vector3(float.Parse(sData[i][2]) / 1000, float.Parse(sData[i][4]) / 1000, float.Parse(sData[i][3]) / 1000));
+                        newTransform.Add(new Vector3(float.Parse(sData[chunkIndex + i][2]) / 1000, float.Parse(sData[chunkIndex + i][4]) / 1000, float.Parse(sData[chunkIndex + i][3]) / 1000));
                         if (i == 0)
                         {
                             newTransform[0] += childNodes[0].position;
@@ -70,16 +63,16 @@ public class FirstPosition : MonoBehaviour
                     }
                     else
                     {
-                        newTransform[i] = new Vector3(float.Parse(sData[i][2]) / 1000, float.Parse(sData[i][4]) / 1000, float.Parse(sData[i][3]) / 1000);
-                        if (i != 0)
+                        newTransform[i] = new Vector3(float.Parse(sData[chunkIndex + i][2]) / 1000, float.Parse(sData[chunkIndex + i][4]) / 1000, float.Parse(sData[chunkIndex + i][3]) / 1000);
+                        if (i == 0)
                         {
-                            newTransform[i] = newTransform[0] + newTransform[i];
+                            newTransform[i] += childNodes[0].position;
+
                         }
                         else
                         {
-                            newTransform[i] += childNodes[0].position;
+                            newTransform[i] = newTransform[0] + newTransform[i];
                         }
-                        //Debug.Log("newTransform updated");
                     }
                 }
                 foreach (Transform child in childNodes)
@@ -149,7 +142,7 @@ public class FirstPosition : MonoBehaviour
                         child.position = newTransform[10];
                     }
                 }
-                index++;
+                DataProcess.Instance.SetIndex(index + 1);
             }
         }
     }
@@ -173,6 +166,8 @@ public class FirstPosition : MonoBehaviour
 
     //    return value;
     //}
+
+
 
     public void PopulateChildren()
     {
