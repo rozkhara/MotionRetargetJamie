@@ -70,38 +70,40 @@ public class TposeAlignment : MonoBehaviour
                 t_childNodes = t_rootNode.GetComponentsInChildren<Transform>();
             }
         }
-
-        Init();
     }
 
     void Update()
     {
-
+        if(a.firstTransform.Count != 0)
+        {
+            Init();
+        }
     }
 
     void Init()
     {
+
         //pose text에서 bone의 길이 가져오기
-        SourceBones[(int)SourceBoneIndex.spine].BoneLength = Vector3.Distance(a.newTransform[0], a.newTransform[7]);
-        SourceBones[(int)SourceBoneIndex.chest].BoneLength = Vector3.Distance(a.newTransform[7], a.newTransform[8]);
-        SourceBones[(int)SourceBoneIndex.neck].BoneLength = Vector3.Distance(a.newTransform[8], a.newTransform[9]);
-        SourceBones[(int)SourceBoneIndex.head].BoneLength = Vector3.Distance(a.newTransform[9], a.newTransform[10]);
+        SourceBones[(int)SourceBoneIndex.spine].BoneLength = Vector3.Distance(a.firstTransform[0], a.firstTransform[7]);
+        SourceBones[(int)SourceBoneIndex.chest].BoneLength = Vector3.Distance(a.firstTransform[7], a.firstTransform[8]);
+        SourceBones[(int)SourceBoneIndex.neck].BoneLength = Vector3.Distance(a.firstTransform[8], a.firstTransform[9]);
+        SourceBones[(int)SourceBoneIndex.head].BoneLength = Vector3.Distance(a.firstTransform[9], a.firstTransform[10]);
 
-        SourceBones[(int)SourceBoneIndex.rUpperLeg].BoneLength = Vector3.Distance(a.newTransform[0], a.newTransform[1]);
-        SourceBones[(int)SourceBoneIndex.rLowerLeg].BoneLength = Vector3.Distance(a.newTransform[1], a.newTransform[2]);
-        SourceBones[(int)SourceBoneIndex.rFoot].BoneLength = Vector3.Distance(a.newTransform[2], a.newTransform[3]);
+        SourceBones[(int)SourceBoneIndex.rUpperLeg].BoneLength = Vector3.Distance(a.firstTransform[0], a.firstTransform[1]);
+        SourceBones[(int)SourceBoneIndex.rLowerLeg].BoneLength = Vector3.Distance(a.firstTransform[1], a.firstTransform[2]);
+        SourceBones[(int)SourceBoneIndex.rFoot].BoneLength = Vector3.Distance(a.firstTransform[2], a.firstTransform[3]);
 
-        SourceBones[(int)SourceBoneIndex.lUpperLeg].BoneLength = Vector3.Distance(a.newTransform[0], a.newTransform[4]);
-        SourceBones[(int)SourceBoneIndex.lLowerLeg].BoneLength = Vector3.Distance(a.newTransform[4], a.newTransform[5]);
-        SourceBones[(int)SourceBoneIndex.lFoot].BoneLength = Vector3.Distance(a.newTransform[5], a.newTransform[6]);
+        SourceBones[(int)SourceBoneIndex.lUpperLeg].BoneLength = Vector3.Distance(a.firstTransform[0], a.firstTransform[4]);
+        SourceBones[(int)SourceBoneIndex.lLowerLeg].BoneLength = Vector3.Distance(a.firstTransform[4], a.firstTransform[5]);
+        SourceBones[(int)SourceBoneIndex.lFoot].BoneLength = Vector3.Distance(a.firstTransform[5], a.firstTransform[6]);
 
-        SourceBones[(int)SourceBoneIndex.rUpperArm].BoneLength = Vector3.Distance(a.newTransform[8], a.newTransform[14]);
-        SourceBones[(int)SourceBoneIndex.rLowerArm].BoneLength = Vector3.Distance(a.newTransform[14], a.newTransform[15]);
-        SourceBones[(int)SourceBoneIndex.rHand].BoneLength = Vector3.Distance(a.newTransform[15], a.newTransform[16]);
+        SourceBones[(int)SourceBoneIndex.rUpperArm].BoneLength = Vector3.Distance(a.firstTransform[8], a.firstTransform[14]);
+        SourceBones[(int)SourceBoneIndex.rLowerArm].BoneLength = Vector3.Distance(a.firstTransform[14], a.firstTransform[15]);
+        SourceBones[(int)SourceBoneIndex.rHand].BoneLength = Vector3.Distance(a.firstTransform[15], a.firstTransform[16]);
 
-        SourceBones[(int)SourceBoneIndex.lUpperArm].BoneLength = Vector3.Distance(a.newTransform[8], a.newTransform[11]);
-        SourceBones[(int)SourceBoneIndex.lLowerArm].BoneLength = Vector3.Distance(a.newTransform[11], a.newTransform[12]);
-        SourceBones[(int)SourceBoneIndex.lHand].BoneLength = Vector3.Distance(a.newTransform[12], a.newTransform[13]);
+        SourceBones[(int)SourceBoneIndex.lUpperArm].BoneLength = Vector3.Distance(a.firstTransform[8], a.firstTransform[11]);
+        SourceBones[(int)SourceBoneIndex.lLowerArm].BoneLength = Vector3.Distance(a.firstTransform[11], a.firstTransform[12]);
+        SourceBones[(int)SourceBoneIndex.lHand].BoneLength = Vector3.Distance(a.firstTransform[12], a.firstTransform[13]);
 
         //target skeleton의 정보를 받아와서 bone의 orientation 반영
         foreach (Transform child in t_childNodes)
