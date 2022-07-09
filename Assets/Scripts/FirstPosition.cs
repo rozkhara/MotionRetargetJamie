@@ -14,8 +14,10 @@ public class FirstPosition : MonoBehaviour
 
     public Transform rootNode;
     public Transform[] childNodes;
-    public string[][] sData = new string[JOINTCOUNT*TARGETFRAME][];
+    public string[][] sData = new string[JOINTCOUNT * TARGETFRAME][];
     public List<Vector3> newTransform;
+    public List<Vector3> firstTransform;
+
     private bool powerSwitch = true;
 
 
@@ -74,6 +76,7 @@ public class FirstPosition : MonoBehaviour
                     {
                         newTransform[i] = newTransform[0] + newTransform[i];
                     }
+                    firstTransform.Add(newTransform[i]);
                 }
                 else
                 {
