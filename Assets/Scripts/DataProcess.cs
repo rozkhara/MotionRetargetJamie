@@ -15,8 +15,8 @@ public class DataProcess : MonoBehaviour
     public string[] lineData;
     private string data;
     public string dataChunk;
-    private string[] temp = new string[JOINTCOUNT * 30];
-    public string[][] sData = new string[JOINTCOUNT][];
+    private string[] temp = new string[JOINTCOUNT * TARGETFRAME];
+    public string[][] sData = new string[JOINTCOUNT * TARGETFRAME][];
     public int frameNum { get; set; }
     public int chunkIndex { get; set; }
     public int currentFrame { get; set; }
@@ -34,6 +34,11 @@ public class DataProcess : MonoBehaviour
     public void UpdateDataChunk()
     {
         data = data.Remove(0, dataChunk.Length);
+        RefreshDataChunk();
+    }
+
+    private void RefreshDataChunk()
+    {
         lineData = data.Split("\n", (JOINTCOUNT * TARGETFRAME) + 1);
         if (lineData.Length == 0 || lineData[lineData.Length - 1] == "")
         {
@@ -44,16 +49,15 @@ public class DataProcess : MonoBehaviour
         loadedFrameCount = temp.Length / JOINTCOUNT;
         refreshIndex = index + loadedFrameCount;
         inChunkFrame = 0;
+        for (int i = 0; i < temp.Length; i++)
+        {
+            lineData[i] = lineData[i].Replace("(", "");
+            lineData[i] = lineData[i].Replace(")", "");
+            sData[i] = lineData[i].Split(" ");
+        }
     }
-
     public void UpdatePerJointData()
     {
-        for (int i = 0; i < JOINTCOUNT; i++)
-        {
-            lineData[inChunkFrame * JOINTCOUNT + i] = lineData[inChunkFrame * JOINTCOUNT + i].Replace("(", "");
-            lineData[inChunkFrame * JOINTCOUNT + i] = lineData[inChunkFrame * JOINTCOUNT + i].Replace(")", "");
-            sData[i] = lineData[inChunkFrame * JOINTCOUNT + i].Split(" ");
-        }
         string[] firstColArr = GetColumn(sData, 0);
         if (firstColArr.Contains(index.ToString()))
         {

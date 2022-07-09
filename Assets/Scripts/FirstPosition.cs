@@ -9,10 +9,12 @@ using System.Text;
 public class FirstPosition : MonoBehaviour
 {
     private const int JOINTCOUNT = 17;
+    private const int TARGETFRAME = 30;
+
 
     public Transform rootNode;
     public Transform[] childNodes;
-    public string[][] sData = new string[JOINTCOUNT][];
+    public string[][] sData = new string[JOINTCOUNT*TARGETFRAME][];
     public List<Vector3> newTransform;
     private bool powerSwitch = true;
 
