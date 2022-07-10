@@ -12,7 +12,7 @@ public enum SourceBoneIndex : int //부모에서 해당 joint까지의 뼈
     rUpperLeg,
     rLowerLeg,
     rFoot,
-
+    
     lUpperLeg,
     lLowerLeg,
     lFoot,
@@ -38,6 +38,7 @@ public class TposeAlignment : MonoBehaviour
 
     public class Bone
     {
+        public Quaternion rotation;
         public Vector3 orientation;
         public float BoneLength;
     }
@@ -105,83 +106,152 @@ public class TposeAlignment : MonoBehaviour
         SourceBones[(int)SourceBoneIndex.lLowerArm].BoneLength = Vector3.Distance(a.firstTransform[11], a.firstTransform[12]);
         SourceBones[(int)SourceBoneIndex.lHand].BoneLength = Vector3.Distance(a.firstTransform[12], a.firstTransform[13]);
 
-        //target skeleton의 정보를 받아와서 bone의 orientation 반영
+        //target skeleton의 정보를 받아와서 bone의 orientation 반영 (localPosition을 이용해 자식의 부모기준 위치를 받아옴)
         foreach (Transform child in t_childNodes)
         {
             if (child.name.Contains("Hips"))
             {
-                SourceBones[(int)SourceBoneIndex.spine].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
-                SourceBones[(int)SourceBoneIndex.lUpperLeg].orientation = Vector3.Normalize(child.GetChild(1).position - child.position);
-                SourceBones[(int)SourceBoneIndex.rUpperLeg].orientation = Vector3.Normalize(child.GetChild(2).position - child.position);
+                SourceBones[(int)SourceBoneIndex.spine].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
+                SourceBones[(int)SourceBoneIndex.lUpperLeg].orientation = Vector3.Normalize(child.GetChild(1).localPosition);
+                SourceBones[(int)SourceBoneIndex.rUpperLeg].orientation = Vector3.Normalize(child.GetChild(2).localPosition);
             }
             else if (child.name.Contains("Spine"))
             {
-                SourceBones[(int)SourceBoneIndex.chest].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.chest].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("Chest"))
             {
                 //target과 source skeleton의 위상이 다르므로, 양 UpperArm은 서로의 좌표를 이용해 구함
-                SourceBones[(int)SourceBoneIndex.lUpperArm].orientation = Vector3.Normalize(child.GetChild(1).position - child.GetChild(2).position);
-                SourceBones[(int)SourceBoneIndex.rUpperArm].orientation = Vector3.Normalize(child.GetChild(2).position - child.GetChild(1).position);
+                SourceBones[(int)SourceBoneIndex.lUpperArm].orientation = Vector3.Normalize(child.GetChild(1).localPosition - child.GetChild(2).localPosition);
+                SourceBones[(int)SourceBoneIndex.rUpperArm].orientation = Vector3.Normalize(child.GetChild(2).localPosition - child.GetChild(1).localPosition);
                 //원본에서 cape, wing 때문에 face가 5번 index
-                SourceBones[(int)SourceBoneIndex.neck].orientation = Vector3.Normalize(child.GetChild(5).position - child.position);
-                SourceBones[(int)SourceBoneIndex.head].orientation = Vector3.Normalize(child.GetChild(5).position - child.position);
+                SourceBones[(int)SourceBoneIndex.neck].orientation = Vector3.Normalize(child.GetChild(5).localPosition);
+                SourceBones[(int)SourceBoneIndex.head].orientation = Vector3.Normalize(child.GetChild(5).localPosition);
             }
             else if (child.name.Contains("UpperArmL"))
             {
-                SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
-            else if (child.name.Contains("UpperArmR"))
+            else if (child.name.Contains("UpperArmR"))   
             {
-                SourceBones[(int)SourceBoneIndex.rLowerArm].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.rLowerArm].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("UpperLegL"))
             {
-                SourceBones[(int)SourceBoneIndex.lLowerLeg].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.lLowerLeg].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("UpperLegR"))
             {
-                SourceBones[(int)SourceBoneIndex.rLowerLeg].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.rLowerLeg].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("LowerArmL"))
             {
-                SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("LowerArmR"))
             {
-                SourceBones[(int)SourceBoneIndex.rHand].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.rHand].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("LowerLegL"))
             {
-                SourceBones[(int)SourceBoneIndex.lFoot].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.lFoot].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
             else if (child.name.Contains("LowerLegR"))
             {
-                SourceBones[(int)SourceBoneIndex.rFoot].orientation = Vector3.Normalize(child.GetChild(0).position - child.position);
+                SourceBones[(int)SourceBoneIndex.rFoot].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
+            }
+        }
+
+        //basis 일치를 위해 rotation 값 가져오기
+        foreach (Transform child in t_childNodes)
+        {
+            if (child.name.Contains("Hips"))
+            {
+                rootNode.rotation = child.rotation;
+            }
+            else if (child.name.Contains("Spine"))
+            {
+                SourceBones[(int)SourceBoneIndex.spine].rotation = child.rotation;
+            }
+            else if (child.name.Contains("Chest"))
+            {
+                SourceBones[(int)SourceBoneIndex.chest].rotation = child.rotation;
+            }
+            else if (child.name.Contains("UpperArmL"))
+            {
+                SourceBones[(int)SourceBoneIndex.lUpperArm].rotation = child.rotation;
+            }
+            else if (child.name.Contains("UpperArmR"))
+            {
+                SourceBones[(int)SourceBoneIndex.rUpperArm].rotation = child.rotation;
+            }
+            else if (child.name.Contains("UpperLegL"))
+            {
+                SourceBones[(int)SourceBoneIndex.lUpperLeg].rotation = child.rotation;
+            }
+            else if (child.name.Contains("UpperLegR"))
+            {
+                SourceBones[(int)SourceBoneIndex.rUpperLeg].rotation = child.rotation;
+            }
+            else if (child.name.Contains("LowerArmL"))
+            {
+                SourceBones[(int)SourceBoneIndex.lLowerArm].rotation = child.rotation;
+            }
+            else if (child.name.Contains("LowerArmR"))
+            {
+                SourceBones[(int)SourceBoneIndex.rLowerArm].rotation = child.rotation;
+            }
+            else if (child.name.Contains("LowerLegL"))
+            {
+                SourceBones[(int)SourceBoneIndex.lLowerLeg].rotation = child.rotation;
+            }
+            else if (child.name.Contains("LowerLegR"))
+            {
+                SourceBones[(int)SourceBoneIndex.rLowerLeg].rotation = child.rotation;
+            }
+            else if (child.name.Contains("FootL"))
+            {
+                SourceBones[(int)SourceBoneIndex.lFoot].rotation = child.rotation;
+            }
+            else if (child.name.Contains("FootR"))
+            {
+                SourceBones[(int)SourceBoneIndex.rFoot].rotation = child.rotation;
+            }
+            else if (child.name.Contains("HandL"))
+            {
+                SourceBones[(int)SourceBoneIndex.lHand].rotation = child.rotation;
+            }
+            else if (child.name.Contains("HandR"))
+            {
+                SourceBones[(int)SourceBoneIndex.rHand].rotation = child.rotation;
+            }
+            else if (child.name.Contains("Face"))
+            {
+                SourceBones[(int)SourceBoneIndex.neck].rotation = child.rotation;
+                SourceBones[(int)SourceBoneIndex.head].rotation = child.rotation;
             }
         }
 
         //뼈의 길이와 방향 정보를 이용해 각 transform의 position 결정
-        foreach(Transform child in childNodes)
+        foreach (Transform child in childNodes)
         {
             if (child.name != "Tpose" && child.name != "base")
             {
                 SourceBoneIndex s = (SourceBoneIndex)System.Enum.Parse(typeof(SourceBoneIndex), child.name);
-                calcPosition((int)s, child);
+                calcTransform((int)s, child);
             }
 
         }
-
-        //basis 일치 ?
-
     }
 
-    void calcPosition(int bone, Transform child)
+    void calcTransform(int bone, Transform child)
     {
         float x = SourceBones[bone].orientation.x * SourceBones[bone].BoneLength;
         float y = SourceBones[bone].orientation.y * SourceBones[bone].BoneLength;
         float z = SourceBones[bone].orientation.z * SourceBones[bone].BoneLength;
         child.localPosition = new Vector3(x, y, z);
+
+        child.rotation = SourceBones[bone].rotation;
     }
 }
 
