@@ -10,6 +10,7 @@ public class PositionWiseUpdate : MonoBehaviour
 {
     private static readonly int _JOINTCOUNT = Constants.JOINTCOUNT;
     private static readonly int _TARGETFRAME = Constants.TARGETFRAME;
+    private static readonly int _SCALEFACTOR = Constants.SCALEFACTOR;
 
     public Transform rootNode;
     public Transform[] childNodes;
@@ -53,7 +54,7 @@ public class PositionWiseUpdate : MonoBehaviour
             }
             try
             {
-                DataProcess.Instance.UpdatePerJointData();
+                DataProcess.Instance.CheckFrameIndex();
             }
             catch (System.Exception e)
             {
@@ -66,7 +67,9 @@ public class PositionWiseUpdate : MonoBehaviour
             {
                 if (newTransform.Count <= i)
                 {
-                    newTransform.Add(new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / 1000));
+                    newTransform.Add(new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / _SCALEFACTOR, 
+                        float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / _SCALEFACTOR,
+                        float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / _SCALEFACTOR));
                     if (i == 0)
                     {
                         newTransform[0] += childNodes[0].position;
@@ -79,7 +82,9 @@ public class PositionWiseUpdate : MonoBehaviour
                 }
                 else
                 {
-                    newTransform[i] = new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / 1000, float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / 1000);
+                    newTransform[i] = new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / _SCALEFACTOR, 
+                        float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / _SCALEFACTOR,
+                        float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / _SCALEFACTOR);
                     if (i == 0)
                     {
                         newTransform[i] += childNodes[0].position;

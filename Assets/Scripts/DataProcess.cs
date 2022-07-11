@@ -14,11 +14,11 @@ public class DataProcess : MonoBehaviour
     public TextAsset textA;
     public string[] lineData;
     private string data;
-    public string dataChunk;
+    public string dataChunk;    //could be replaced with integer value as the actual string value is never referenced currently
     private string[] temp = new string[_JOINTCOUNT * _TARGETFRAME];
     public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
-    public int frameNum { get; set; }
     public int chunkIndex { get; set; }
+    private int tempChunkIndex;
     public int loadedFrameCount { get; set; }
     public int refreshIndex { get; set; }
     private int inChunkFrame;
@@ -57,31 +57,33 @@ public class DataProcess : MonoBehaviour
             sData[i] = lineData[i].Split(" ");
         }
     }
-    public void UpdatePerJointData()
+
+    public void CheckFrameIndex()
     {
         string[] firstColArr = GetColumn(sData, 0);
-        if (firstColArr.Contains(index.ToString()))
+        if (firstColArr.Contains(index.ToString())) //if current frame exists within the loaded frames
         {
-            frameNum = index;
-            chunkIndex = firstColArr.ToList().IndexOf(index.ToString());
-        }
-        else
-        {
-            if (int.Parse(firstColArr[0]) > index) //if current frame is less than read frame
+            tempChunkIndex = firstColArr.ToList().IndexOf(index.ToString());
+            if (sData[tempChunkIndex][1] == "0" && sData[tempChunkIndex + _JOINTCOUNT - 1][1] == (_JOINTCOUNT - 1).ToString())    //if current frame's data includes every joint
             {
-                throw new System.Exception("Wait until index comes");
+                chunkIndex = tempChunkIndex;
             }
-            else if (int.Parse(firstColArr[firstColArr.Length - 1]) < index) //if current frame is greater than read frame
+            else
             {
-                if (inChunkFrame == loadedFrameCount) //if current frame is the last frame of the loaded chunk
-                {
-                    UpdateDataChunk();
-                }
-                else
-                {
-                    inChunkFrame++;
-                }
-                UpdatePerJointData();
+                throw new System.Exception("Loaded data does not include information for every joint");
+            }
+        }
+        else    //if current frame does not exist within the loaded frames
+        {
+            if (int.Parse(firstColArr[0]) > index)  //if current frame is less than read frame
+            {
+                RefreshDataChunk();     //wait until current frame matches with the read frame
+                return;
+                //throw new System.Exception("Wait until index comes");
+            }
+            else if (int.Parse(firstColArr[firstColArr.Length - 1]) < index)    //if current frame is greater than read frame
+            {
+                UpdateDataChunk();      //load new chunk
                 return;
             }
             throw new System.Exception("The current frame does not exist within the loaded frames");
