@@ -6,15 +6,14 @@ using System.Linq;
 using System.Text;
 
 
-public class FirstPosition : MonoBehaviour
+public class PositionWiseUpdate : MonoBehaviour
 {
-    private const int JOINTCOUNT = 17;
-    private const int TARGETFRAME = 30;
-
+    private static readonly int _JOINTCOUNT = Constants.JOINTCOUNT;
+    private static readonly int _TARGETFRAME = Constants.TARGETFRAME;
 
     public Transform rootNode;
     public Transform[] childNodes;
-    public string[][] sData = new string[JOINTCOUNT * TARGETFRAME][];
+    public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
     public List<Vector3> newTransform;
     public List<Vector3> firstTransform;
 
@@ -63,7 +62,7 @@ public class FirstPosition : MonoBehaviour
                 return;
             }
             sData = DataProcess.Instance.GetSData();
-            for (int i = 0; i < JOINTCOUNT; i++)
+            for (int i = 0; i < _JOINTCOUNT; i++)
             {
                 if (newTransform.Count <= i)
                 {

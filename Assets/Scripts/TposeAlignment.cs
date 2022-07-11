@@ -46,14 +46,14 @@ public class TposeAlignment : MonoBehaviour
     public Bone BaseBone;
     public Bone[] SourceBones;
 
-    public FirstPosition a;
+    public PositionWiseUpdate a;
 
     void Start()
     {
         SourceBones = new Bone[(int)SourceBoneIndex.count];
         for (int i = 0; i < (int)SourceBoneIndex.count; i++) SourceBones[i] = new Bone();
 
-        a = GameObject.Find("sourcePositionWise").GetComponent<FirstPosition>();
+        a = GameObject.Find("sourcePositionWise").GetComponent<PositionWiseUpdate>();
         if (rootNode != null)
         {
             if (childNodes == null || childNodes.Length == 0)

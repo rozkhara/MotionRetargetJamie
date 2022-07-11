@@ -7,19 +7,18 @@ public class DataProcess : MonoBehaviour
 {
     private static DataProcess instance = null;
 
-    private const int JOINTCOUNT = 17;
-    private const int TARGETFRAME = 30;
+    private static readonly int _JOINTCOUNT = Constants.JOINTCOUNT;
+    private static readonly int _TARGETFRAME = Constants.TARGETFRAME;
 
     public int index { get; set; } = 0;
     public TextAsset textA;
     public string[] lineData;
     private string data;
     public string dataChunk;
-    private string[] temp = new string[JOINTCOUNT * TARGETFRAME];
-    public string[][] sData = new string[JOINTCOUNT * TARGETFRAME][];
+    private string[] temp = new string[_JOINTCOUNT * _TARGETFRAME];
+    public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
     public int frameNum { get; set; }
     public int chunkIndex { get; set; }
-    public int currentFrame { get; set; }
     public int loadedFrameCount { get; set; }
     public int refreshIndex { get; set; }
     private int inChunkFrame;
@@ -39,14 +38,16 @@ public class DataProcess : MonoBehaviour
 
     private void RefreshDataChunk()
     {
-        lineData = data.Split("\n", (JOINTCOUNT * TARGETFRAME) + 1);
+        System.Array.Clear(lineData, 0, lineData.Length);
+        System.Array.Clear(sData, 0, sData.Length);
+        lineData = data.Split("\n", (_JOINTCOUNT * _TARGETFRAME) + 1);
         if (lineData.Length == 0 || lineData[lineData.Length - 1] == "")
         {
             throw new System.Exception("EOF");
         }
         System.Array.Copy(lineData, temp, lineData.Length - 1);
         dataChunk = string.Join("\n", temp) + "\n";
-        loadedFrameCount = temp.Length / JOINTCOUNT;
+        loadedFrameCount = temp.Length / _JOINTCOUNT;
         refreshIndex = index + loadedFrameCount;
         inChunkFrame = 0;
         for (int i = 0; i < temp.Length; i++)
