@@ -67,7 +67,7 @@ public class PositionWiseUpdate : MonoBehaviour
             {
                 if (newTransform.Count <= i)
                 {
-                    newTransform.Add(new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / _SCALEFACTOR, 
+                    newTransform.Add(new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / _SCALEFACTOR,
                         float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / _SCALEFACTOR,
                         float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / _SCALEFACTOR));
                     if (i == 0)
@@ -166,8 +166,6 @@ public class PositionWiseUpdate : MonoBehaviour
         }
     }
 
-
-
     //string ReadTxt(string filePath)
     //{
     //    FileInfo fileInfo = new FileInfo(filePath);
@@ -185,7 +183,6 @@ public class PositionWiseUpdate : MonoBehaviour
 
     //    return value;
     //}
-
 
 
     public void PopulateChildren()

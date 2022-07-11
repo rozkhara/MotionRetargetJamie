@@ -14,14 +14,14 @@ public class DataProcess : MonoBehaviour
     public TextAsset textA;
     public string[] lineData;
     private string data;
-    public string dataChunk;    //could be replaced with integer value as the actual string value is never referenced currently
+    public string dataChunk;   //could be replaced with integer value as the actual string value is never referenced currently
     private string[] temp = new string[_JOINTCOUNT * _TARGETFRAME];
     public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
     public int chunkIndex { get; set; }
     private int tempChunkIndex;
     public int loadedFrameCount { get; set; }
     public int refreshIndex { get; set; }
-    private int inChunkFrame;
+    public int inChunkFrame { get; set; }
 
 
 
@@ -43,7 +43,8 @@ public class DataProcess : MonoBehaviour
         lineData = data.Split("\n", (_JOINTCOUNT * _TARGETFRAME) + 1);
         if (lineData.Length == 0 || lineData[lineData.Length - 1] == "")
         {
-            throw new System.Exception("EOF");
+            dataChunk = "";     //This necessarily frees the last chunk loaded, thus in future the whole determination process needs to be performed per frame, not per 30 frames
+            throw new System.Exception("EOF detected");
         }
         System.Array.Copy(lineData, temp, lineData.Length - 1);
         dataChunk = string.Join("\n", temp) + "\n";

@@ -12,7 +12,7 @@ public enum SourceBoneIndex : int //부모에서 해당 joint까지의 뼈
     rUpperLeg,
     rLowerLeg,
     rFoot,
-    
+
     lUpperLeg,
     lLowerLeg,
     lFoot,
@@ -32,6 +32,11 @@ public class TposeAlignment : MonoBehaviour
 {
     public Transform rootNode;           //최종 source skeleton의 transform
     public Transform[] childNodes;
+    public List<Quaternion> perJointRotSourceGlobal;     //Rr G
+    public List<Quaternion> perJointRotSourceLocal;    //qr init
+    public List<Quaternion> perJointRotTargetGlobal;     //Rd G
+    public List<Quaternion> perJointRotTargetLocal;    //qd init
+    private bool flag = true;
 
     public Transform t_rootNode;         //target skeleton의 transform (원본 Chr_Hips)
     public Transform[] t_childNodes;
@@ -75,10 +80,15 @@ public class TposeAlignment : MonoBehaviour
 
     void Update()
     {
-        if(a.firstTransform.Count != 0)
+        if (flag)
         {
-            Init();
+            if (a.firstTransform.Count != 0)
+            {
+                Init();
+                flag = false;
+            }
         }
+
     }
 
     void Init()
@@ -132,7 +142,7 @@ public class TposeAlignment : MonoBehaviour
             {
                 SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
-            else if (child.name.Contains("UpperArmR"))   
+            else if (child.name.Contains("UpperArmR"))
             {
                 SourceBones[(int)SourceBoneIndex.rLowerArm].orientation = Vector3.Normalize(child.GetChild(0).localPosition);
             }
@@ -240,7 +250,16 @@ public class TposeAlignment : MonoBehaviour
                 SourceBoneIndex s = (SourceBoneIndex)System.Enum.Parse(typeof(SourceBoneIndex), child.name);
                 calcTransform((int)s, child);
             }
-
+        }
+        for (int i = 0; i < childNodes.Length; i++)
+        {
+            perJointRotSourceGlobal.Add(childNodes[i].rotation);
+            perJointRotSourceLocal.Add(childNodes[i].localRotation);
+        }
+        for (int i = 0; i < t_childNodes.Length; i++)
+        {
+            perJointRotTargetGlobal.Add(t_childNodes[i].rotation);
+            perJointRotTargetLocal.Add(t_childNodes[i].localRotation);
         }
     }
 
