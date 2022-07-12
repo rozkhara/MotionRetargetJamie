@@ -36,7 +36,7 @@ public class TposeAlignment : MonoBehaviour
     public List<Quaternion> perJointRotSourceLocal;    //qr init
     public List<Quaternion> perJointRotTargetGlobal;     //Rd G
     public List<Quaternion> perJointRotTargetLocal;    //qd init
-    private bool flag = true;
+    public bool flag = true;
 
     public Transform t_rootNode;         //target skeleton의 transform (원본 Chr_Hips)
     public Transform[] t_childNodes;

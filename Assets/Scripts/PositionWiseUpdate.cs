@@ -111,51 +111,51 @@ public class PositionWiseUpdate : MonoBehaviour
                 }
                 else if (child.name.Contains("UpperArmL"))
                 {
-                    child.position = newTransform[14];
+                    child.position = newTransform[11];
                 }
                 else if (child.name.Contains("UpperArmR"))
                 {
-                    child.position = newTransform[11];
+                    child.position = newTransform[14];
                 }
                 else if (child.name.Contains("UpperLegL"))
                 {
-                    child.position = newTransform[1];
+                    child.position = newTransform[4];
                 }
                 else if (child.name.Contains("UpperLegR"))
                 {
-                    child.position = newTransform[4];
+                    child.position = newTransform[1];
                 }
                 else if (child.name.Contains("LowerArmL"))
                 {
-                    child.position = newTransform[15];
+                    child.position = newTransform[12];
                 }
                 else if (child.name.Contains("LowerArmR"))
                 {
-                    child.position = newTransform[12];
+                    child.position = newTransform[15];
                 }
                 else if (child.name.Contains("LowerLegL"))
                 {
-                    child.position = newTransform[2];
+                    child.position = newTransform[5];
                 }
                 else if (child.name.Contains("LowerLegR"))
                 {
-                    child.position = newTransform[5];
+                    child.position = newTransform[2];
                 }
                 else if (child.name.Contains("FootL"))
                 {
-                    child.position = newTransform[3];
+                    child.position = newTransform[6];
                 }
                 else if (child.name.Contains("FootR"))
                 {
-                    child.position = newTransform[6];
+                    child.position = newTransform[3];
                 }
                 else if (child.name.Contains("HandL"))
                 {
-                    child.position = newTransform[16];
+                    child.position = newTransform[13];
                 }
                 else if (child.name.Contains("HandR"))
                 {
-                    child.position = newTransform[13];
+                    child.position = newTransform[16];
                 }
                 else if (child.name.Contains("Face"))
                 {

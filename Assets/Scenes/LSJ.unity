@@ -753,6 +753,31 @@ Transform:
   m_Father: {fileID: 1992026375}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &595008811 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
+  m_PrefabInstance: {fileID: 1835193851}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &595008813
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595008811}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &622754034
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,7 +1073,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &795982569
 Transform:
   m_ObjectHideFlags: 0
@@ -1174,6 +1199,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rootNode: {fileID: 1992026375}
   childNodes: []
+  perJointRotSourceGlobal: []
+  perJointRotSourceLocal: []
+  perJointRotTargetGlobal: []
+  perJointRotTargetLocal: []
+  flag: 1
   t_rootNode: {fileID: 8659224940084568337, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
   t_childNodes: []
   a: {fileID: 0}
@@ -2443,7 +2473,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1714372483
 Transform:
   m_ObjectHideFlags: 0
