@@ -31,7 +31,7 @@ public class PositionWiseUpdate : MonoBehaviour
                 PopulateChildren();
             }
         }
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = 30;
     }
 
     private void Update()
@@ -149,11 +149,11 @@ public class PositionWiseUpdate : MonoBehaviour
                 {
                     child.position = newTransform[3];
                 }
-                else if (child.name.Contains("HandL"))
+                else if (child.name.Contains("Cha_HandL"))
                 {
                     child.position = newTransform[13];
                 }
-                else if (child.name.Contains("HandR"))
+                else if (child.name.Contains("Cha_HandR"))
                 {
                     child.position = newTransform[16];
                 }
