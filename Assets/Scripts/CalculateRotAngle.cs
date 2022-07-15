@@ -13,10 +13,21 @@ public class CalculateRotAngle : MonoBehaviour
     public Transform rootNode;
     public Transform[] childNodes;
 
+    public Transform s_rootNode;
+    public Transform[] s_childNodes;
+
+    private TposeAlignment TPA;
+
+
     private JointPoint[] jointPoints;
-    public  JointPoint[] JointPoints { get { return jointPoints; } }
+    public JointPoint[] JointPoints { get { return jointPoints; } }
+
+    private JointPoint[] s_jointPoints;
+    public JointPoint[] s_JointPoints { get { return s_jointPoints; } }
+
 
     private bool flag = true;
+    private bool t_flag = true;
 
     public class JointPoint
     {
@@ -37,6 +48,7 @@ public class CalculateRotAngle : MonoBehaviour
 
     private void Awake()
     {
+        TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
     }
     private void Update()
     {
@@ -45,6 +57,7 @@ public class CalculateRotAngle : MonoBehaviour
             //try
             //{
                 Init();
+            
             //}
             //catch(System.Exception e)
             //{
@@ -52,7 +65,22 @@ public class CalculateRotAngle : MonoBehaviour
             //}
             flag = false;
         }
-        RotUpdate();
+        if (t_flag)
+        {
+            if (!TPA.flag)
+            {
+                Init_s();
+                t_flag = false;
+            }
+        }
+        if (!flag)
+        {
+            RotUpdate();
+        }
+        if (!t_flag)
+        {
+            RotUpdate_s();
+        }
     }
 
     public JointPoint[] Init()
@@ -147,6 +175,98 @@ public class CalculateRotAngle : MonoBehaviour
         return JointPoints;
     }
 
+    public JointPoint[] Init_s()
+    {
+        s_jointPoints = new JointPoint[(int)Constants.SourcePositionIndex.Count];
+        for (int i = 0; i < (int)Constants.SourcePositionIndex.Count; i++)
+        {
+            s_JointPoints[i] = new JointPoint();
+        }
+
+        //Right Leg
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.right_hip];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_knee].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.right_knee];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_foot].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.right_foot];
+
+        //Left Leg
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.left_hip];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_knee].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.left_knee];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_foot].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.left_foot];
+
+        //Spinal
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.bottom_torso];
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.center_torso];
+        s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.upper_torso];
+        s_jointPoints[(int)Constants.SourcePositionIndex.neck_base].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.neck_base];
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_head].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.center_head];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_HeadDummy].boneTransform =
+
+        //Left Arm
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.left_shoulder];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.left_elbow];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hand].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.left_hand];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.BodyHandL].boneTransform =
+
+        //Right Arm
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.right_shoulder];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.right_elbow];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].boneTransform = s_childNodes[(int)Constants.SourcePositionIndex.right_hand];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.BodyHandR].boneTransform = 
+
+        //s_child Settings
+        //Right Leg
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].child = s_jointPoints[(int)Constants.SourcePositionIndex.right_knee];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_knee].child = s_jointPoints[(int)Constants.SourcePositionIndex.right_foot];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_FootR].child = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_ToeR];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_FootR].parent = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_LowerLegR];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_foot].parent = s_jointPoints[(int)Constants.SourcePositionIndex.right_knee];
+
+        //Left Leg
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].child = s_jointPoints[(int)Constants.SourcePositionIndex.left_knee];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_knee].child = s_jointPoints[(int)Constants.SourcePositionIndex.left_foot];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_FootL].child = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_ToeL];
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_FootL].parent = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_LowerLegL];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_foot].parent = s_jointPoints[(int)Constants.SourcePositionIndex.left_knee];
+
+        //Spinal
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].child = s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso];
+        s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso].child = s_jointPoints[(int)Constants.SourcePositionIndex.neck_base];
+        s_jointPoints[(int)Constants.SourcePositionIndex.neck_base].child = s_jointPoints[(int)Constants.SourcePositionIndex.center_head];
+
+        //Left Arm
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].child = s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].child = s_jointPoints[(int)Constants.SourcePositionIndex.left_hand];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].parent = s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder];
+
+        //Right Arm
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].child = s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].child = s_jointPoints[(int)Constants.SourcePositionIndex.right_hand];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].parent = s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder];
+
+        //Set Inverse
+        Vector3 forward = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].boneTransform.position,
+            s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].boneTransform.position,
+            s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].boneTransform.position);
+        foreach (JointPoint jp in s_jointPoints)
+        {
+            if (jp.boneTransform != null)
+            {
+                jp.initRotation = jp.boneTransform.rotation;
+            }
+
+            if (jp.child != null)
+            {
+                jp.inverse = GetInverse(jp, jp.child, forward);
+                jp.inverseRotation = jp.inverse * jp.initRotation;
+            }
+        }
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation = s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverse * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].initRotation;
+
+
+        return s_jointPoints;
+    }
+
     public void RotUpdate()
     {
         GetNT();
@@ -206,6 +326,65 @@ public class CalculateRotAngle : MonoBehaviour
         //Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine], jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL], )
     }
 
+    public void RotUpdate_s()
+    {
+        GetNT_s();
+        Vector3 forward_s = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition,
+           s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].jointPosition,
+           s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition);
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Hips].boneTransform.position = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Hips].jointPosition;
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform.rotation = Quaternion.LookRotation(forward_s) * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation;
+
+        foreach (JointPoint jp in s_jointPoints)
+        {
+            if (jp.parent != null)
+            {
+                if (jp.child != null)
+                {
+                    Vector3 fv = jp.parent.jointPosition - jp.jointPosition;
+                    jp.boneTransform.rotation = Quaternion.LookRotation(jp.jointPosition - jp.child.jointPosition, fv) * jp.inverseRotation;
+                }
+            }
+            else if (jp.child != null)
+            {
+                jp.boneTransform.rotation = Quaternion.LookRotation(jp.jointPosition - jp.child.jointPosition, forward_s) * jp.inverseRotation;
+            }
+        }
+
+        //Right Leg
+        s_childNodes[(int)Constants.SourcePositionIndex.right_hip] = s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.right_knee] = s_jointPoints[(int)Constants.SourcePositionIndex.right_knee].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.right_foot] = s_jointPoints[(int)Constants.SourcePositionIndex.right_foot].boneTransform;
+        //s_childNodes[(int)Constants.SourcePositionIndex.Cha_ToeR] = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_ToeR].boneTransform;
+
+        //Left Leg
+        s_childNodes[(int)Constants.SourcePositionIndex.left_hip] = s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.left_knee] = s_jointPoints[(int)Constants.SourcePositionIndex.left_knee].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.left_foot] = s_jointPoints[(int)Constants.SourcePositionIndex.left_foot].boneTransform;
+        //s_childNodes[(int)Constants.SourcePositionIndex.Cha_ToeL] = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_ToeL].boneTransform;
+
+        //Spinal
+        s_childNodes[(int)Constants.SourcePositionIndex.bottom_torso] = s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.center_torso] = s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.upper_torso] = s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.neck_base] = s_jointPoints[(int)Constants.SourcePositionIndex.neck_base].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.center_head] = s_jointPoints[(int)Constants.SourcePositionIndex.center_head].boneTransform;
+        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_HeadDummy].boneTransform =
+
+        //Left Arm
+        s_childNodes[(int)Constants.SourcePositionIndex.left_shoulder] = s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.left_elbow] = s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.left_hand] = s_jointPoints[(int)Constants.SourcePositionIndex.left_hand].boneTransform;
+        //s_jointPoints[(int)Constants.SourcePositionIndex.BodyHandL].boneTransform =
+
+        //Right Arm
+        s_childNodes[(int)Constants.SourcePositionIndex.right_shoulder] = s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.right_elbow] = s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].boneTransform;
+        s_childNodes[(int)Constants.SourcePositionIndex.right_hand] = s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].boneTransform;
+        //s_jointPoints[(int)Constants.SourcePositionIndex.BodyHandR].boneTransform = 
+
+        //Vector3 forward = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Spine], s_jointPoints[(int)Constants.SourcePositionIndex.Cha_UpperLegL], )
+    }
     public Quaternion GetInverse(JointPoint p1, JointPoint p2, Vector3 vec)
     {
         return Quaternion.Inverse(Quaternion.LookRotation(p1.boneTransform.position - p2.boneTransform.position, vec));
@@ -223,6 +402,7 @@ public class CalculateRotAngle : MonoBehaviour
     public void PopulateChildren()
     {
         childNodes = rootNode.GetComponentsInChildren<Transform>();
+        s_childNodes = s_rootNode.GetComponentsInChildren<Transform>();
     }
 
     private void GetNT()
@@ -299,6 +479,89 @@ public class CalculateRotAngle : MonoBehaviour
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_elbow][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_elbow][3]) / _SCALEFACTOR);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][3]) / _SCALEFACTOR);
+    }
+
+    private void GetNT_s()
+    {
+        sData = DataProcess.Instance.GetSData();
+
+        //Right Leg
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hip][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hip][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hip][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_knee].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_foot].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_foot][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_foot][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_foot][3]) / _SCALEFACTOR);
+
+        //Left Leg
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_hip][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_hip][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_hip][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_knee].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_knee][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_knee][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_knee][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_foot].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_foot][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_foot][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_foot][3]) / _SCALEFACTOR);
+
+        //Spinal
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.bottom_torso][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.bottom_torso][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.bottom_torso][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_torso][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_torso][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_torso][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.upper_torso][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.upper_torso][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.upper_torso][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.neck_base].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_head].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][3]) / _SCALEFACTOR);
+
+        //Left Arm
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_shoulder][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_shoulder][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_shoulder][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_elbow][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_elbow][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_elbow][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hand].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_hand][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_hand][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_hand][3]) / _SCALEFACTOR);
+
+        //Right Arm
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_shoulder][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_shoulder][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_shoulder][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].jointPosition =
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_elbow][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_elbow][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_elbow][3]) / _SCALEFACTOR);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].jointPosition =
             new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][2]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][3]) / _SCALEFACTOR);

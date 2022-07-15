@@ -549,7 +549,7 @@ Transform:
   m_Children:
   - {fileID: 2008153876}
   m_Father: {fileID: 1992026375}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &556687989 stripped
 Transform:
@@ -739,7 +739,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &795982569
 Transform:
   m_ObjectHideFlags: 0
@@ -797,7 +797,25 @@ MonoBehaviour:
   - {fileID: 1659507386}
   - {fileID: 2126997542}
   - {fileID: 614476490}
-  nodeRotations: []
+  s_rootNode: {fileID: 1992026375}
+  s_childNodes:
+  - {fileID: 1992026375}
+  - {fileID: 555761635}
+  - {fileID: 2008153876}
+  - {fileID: 1069939598}
+  - {fileID: 2093222252}
+  - {fileID: 83179394}
+  - {fileID: 352104193}
+  - {fileID: 905949249}
+  - {fileID: 444422480}
+  - {fileID: 1177940261}
+  - {fileID: 1367494818}
+  - {fileID: 72711944}
+  - {fileID: 1609591946}
+  - {fileID: 1559853887}
+  - {fileID: 11187474}
+  - {fileID: 768529943}
+  - {fileID: 1547429439}
 --- !u!114 &795982571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -934,7 +952,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 876619067}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.582, z: 1}
+  m_LocalPosition: {x: 1, y: 0.582, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -972,7 +990,7 @@ Transform:
   m_Children:
   - {fileID: 444422480}
   m_Father: {fileID: 1992026375}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &917982428 stripped
 Transform:
@@ -1352,6 +1370,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: sourceRot
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -1627,7 +1649,25 @@ MonoBehaviour:
   - {fileID: 427814275}
   - {fileID: 1065122763}
   - {fileID: 521996954}
-  nodeRotations: []
+  s_rootNode: {fileID: 1992026375}
+  s_childNodes:
+  - {fileID: 1992026375}
+  - {fileID: 555761635}
+  - {fileID: 2008153876}
+  - {fileID: 1069939598}
+  - {fileID: 2093222252}
+  - {fileID: 83179394}
+  - {fileID: 352104193}
+  - {fileID: 905949249}
+  - {fileID: 444422480}
+  - {fileID: 1177940261}
+  - {fileID: 1367494818}
+  - {fileID: 72711944}
+  - {fileID: 1609591946}
+  - {fileID: 1559853887}
+  - {fileID: 11187474}
+  - {fileID: 768529943}
+  - {fileID: 1547429439}
 --- !u!114 &1714372485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1642,34 +1682,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rootNode: {fileID: 1835193852}
   childNodes:
-  - {fileID: 1407655443}
-  - {fileID: 1672391913}
-  - {fileID: 556687989}
-  - {fileID: 2107856868}
-  - {fileID: 1958254071}
-  - {fileID: 1514340402}
-  - {fileID: 563063753}
-  - {fileID: 148913757}
-  - {fileID: 1435466581}
-  - {fileID: 1408571473}
-  - {fileID: 156500571}
-  - {fileID: 534269269}
-  - {fileID: 429125104}
-  - {fileID: 368701521}
-  - {fileID: 1819233956}
-  - {fileID: 1895749224}
-  - {fileID: 1642967418}
-  - {fileID: 730487987}
-  - {fileID: 13863889}
-  - {fileID: 1951185355}
-  - {fileID: 1539452400}
-  - {fileID: 1302126030}
-  - {fileID: 2144429909}
-  - {fileID: 974304884}
-  - {fileID: 524362033}
-  - {fileID: 1659507386}
-  - {fileID: 2126997542}
-  - {fileID: 614476490}
+  - {fileID: 1835193852}
+  - {fileID: 1413233668}
+  - {fileID: 433325422}
+  - {fileID: 1473408220}
+  - {fileID: 267712413}
+  - {fileID: 605381675}
+  - {fileID: 1993802744}
+  - {fileID: 479759582}
+  - {fileID: 593565034}
+  - {fileID: 719260159}
+  - {fileID: 57485585}
+  - {fileID: 1843020676}
+  - {fileID: 205565683}
+  - {fileID: 516357049}
+  - {fileID: 648617479}
+  - {fileID: 1178925055}
+  - {fileID: 1127862783}
+  - {fileID: 2055163058}
+  - {fileID: 1049578256}
+  - {fileID: 376374858}
+  - {fileID: 843699254}
+  - {fileID: 1157723981}
+  - {fileID: 1849785106}
+  - {fileID: 1229684129}
+  - {fileID: 1463133234}
+  - {fileID: 427814275}
+  - {fileID: 1065122763}
+  - {fileID: 521996954}
 --- !u!4 &1744094782 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400024, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
@@ -1810,9 +1850,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 905949249}
-  - {fileID: 2093222252}
   - {fileID: 555761635}
+  - {fileID: 2093222252}
+  - {fileID: 905949249}
   m_Father: {fileID: 876619070}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
