@@ -17,6 +17,9 @@ public class CalculateRotAngle : MonoBehaviour
     public  JointPoint[] JointPoints { get { return jointPoints; } }
 
     private bool flag = true;
+    //임시
+    public bool pflag;
+    public TposeAlignment qInfo;
 
     public class JointPoint
     {
@@ -37,6 +40,7 @@ public class CalculateRotAngle : MonoBehaviour
 
     private void Awake()
     {
+        qInfo = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
     }
     private void Update()
     {
@@ -204,6 +208,16 @@ public class CalculateRotAngle : MonoBehaviour
         //jointPoints[(int)Constants.TargetPositionIndex.BodyHandR].boneTransform = 
 
         //Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine], jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL], )
+
+        //임시
+        if (!pflag)
+        {
+            for (int i = 0; i < childNodes.Length; i++)
+            {
+                childNodes[i].rotation = qInfo.qPre[i] * childNodes[i].rotation * qInfo.qPost[i];
+                //childNodes[i].localRotation = qInfo.qPre[i] * childNodes[i].localRotation * qInfo.qPost[i];
+            }
+        }
     }
 
     public Quaternion GetInverse(JointPoint p1, JointPoint p2, Vector3 vec)
