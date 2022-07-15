@@ -18,7 +18,7 @@ public class PositionWiseUpdate : MonoBehaviour
     public List<Vector3> newTransform;
     public List<Vector3> firstTransform;
 
-    private bool powerSwitch = true;
+    //private bool powerSwitch = true;
 
 
     private void Awake()
@@ -31,37 +31,12 @@ public class PositionWiseUpdate : MonoBehaviour
                 PopulateChildren();
             }
         }
-        Application.targetFrameRate = 30;
     }
 
     private void Update()
     {
-        if (powerSwitch)
+        if (DataProcess.Instance.parseFlag)
         {
-            if (DataProcess.Instance.index == DataProcess.Instance.refreshIndex)
-            {
-                try
-                {
-                    DataProcess.Instance.UpdateDataChunk();
-
-                }
-                catch (System.Exception e)
-                {
-                    Debug.Log(e.Message);
-                    powerSwitch = false;
-                    return;
-                }
-            }
-            try
-            {
-                DataProcess.Instance.CheckFrameIndex();
-            }
-            catch (System.Exception e)
-            {
-                Debug.Log(e.Message);
-                powerSwitch = false;
-                return;
-            }
             sData = DataProcess.Instance.GetSData();
             for (int i = 0; i < _JOINTCOUNT; i++)
             {

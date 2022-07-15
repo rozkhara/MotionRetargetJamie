@@ -25,7 +25,7 @@ public class ViewSkeleton : MonoBehaviour
                 if (child == rootNode)
                 {
                     //list includes the root, if root then larger, green cube
-                    Gizmos.color = Color.green;
+                    Gizmos.color = myColor;
                     Gizmos.DrawSphere(child.position, 0.05f);
                 }
                 else

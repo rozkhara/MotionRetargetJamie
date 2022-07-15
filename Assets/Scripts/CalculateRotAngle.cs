@@ -73,14 +73,18 @@ public class CalculateRotAngle : MonoBehaviour
                 t_flag = false;
             }
         }
-        if (!flag)
+        if (DataProcess.Instance.parseFlag)
         {
-            RotUpdate();
+            if (!flag)
+            {
+                RotUpdate();
+            }
+            if (!t_flag)
+            {
+                RotUpdate_s();
+            }
         }
-        if (!t_flag)
-        {
-            RotUpdate_s();
-        }
+        
     }
 
     public JointPoint[] Init()
@@ -144,12 +148,12 @@ public class CalculateRotAngle : MonoBehaviour
         //Left Arm
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL];
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL];
 
         //Right Arm
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR];
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR];
 
         //Set Inverse
         Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].boneTransform.position,
@@ -236,12 +240,12 @@ public class CalculateRotAngle : MonoBehaviour
         //Left Arm
         s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].child = s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow];
         s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].child = s_jointPoints[(int)Constants.SourcePositionIndex.left_hand];
-        s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].parent = s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder];
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hand].parent = s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow];
 
         //Right Arm
         s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].child = s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow];
         s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].child = s_jointPoints[(int)Constants.SourcePositionIndex.right_hand];
-        s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].parent = s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder];
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].parent = s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow];
 
         //Set Inverse
         Vector3 forward = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].boneTransform.position,
@@ -329,11 +333,11 @@ public class CalculateRotAngle : MonoBehaviour
     public void RotUpdate_s()
     {
         GetNT_s();
-        Vector3 forward_s = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition,
+        Vector3 forward = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition,
            s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].jointPosition,
            s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition);
         //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Hips].boneTransform.position = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Hips].jointPosition;
-        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform.rotation = Quaternion.LookRotation(forward_s) * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation;
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform.rotation = Quaternion.LookRotation(forward) * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation;
 
         foreach (JointPoint jp in s_jointPoints)
         {
@@ -347,7 +351,7 @@ public class CalculateRotAngle : MonoBehaviour
             }
             else if (jp.child != null)
             {
-                jp.boneTransform.rotation = Quaternion.LookRotation(jp.jointPosition - jp.child.jointPosition, forward_s) * jp.inverseRotation;
+                jp.boneTransform.rotation = Quaternion.LookRotation(jp.jointPosition - jp.child.jointPosition, forward) * jp.inverseRotation;
             }
         }
 

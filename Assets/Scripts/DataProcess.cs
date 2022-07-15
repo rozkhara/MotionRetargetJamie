@@ -23,6 +23,9 @@ public class DataProcess : MonoBehaviour
     public int refreshIndex { get; set; }
     public int inChunkFrame { get; set; }
 
+    public bool parseFlag { get; set; } = false;
+    private bool flag = true;
+
 
 
     public string[][] GetSData()
@@ -94,6 +97,8 @@ public class DataProcess : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 30;
+
         data = textA.text.ToString();
         if (null == instance)
         {
@@ -104,6 +109,40 @@ public class DataProcess : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+    private void Update()
+    {
+        if (flag)
+        {
+            if (index == refreshIndex)
+            {
+                try
+                {
+                    UpdateDataChunk();
+                    parseFlag = true;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.Log(e.Message);
+                    parseFlag = false;
+                    flag = false;
+                    return;
+                }
+            }
+            try
+            {
+                CheckFrameIndex();
+                parseFlag = true;
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log(e.Message);
+                parseFlag = false;
+                flag = false;
+                return;
+            }
+        }
+        
     }
 
     public static DataProcess Instance

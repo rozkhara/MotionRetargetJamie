@@ -981,6 +981,12 @@ MonoBehaviour:
   rootNode: {fileID: 1992026375}
   childNodes:
   - {fileID: 1992026375}
+  - {fileID: 555761635}
+  - {fileID: 2008153876}
+  - {fileID: 1069939598}
+  - {fileID: 2093222252}
+  - {fileID: 83179394}
+  - {fileID: 352104193}
   - {fileID: 905949249}
   - {fileID: 444422480}
   - {fileID: 1177940261}
@@ -991,13 +997,7 @@ MonoBehaviour:
   - {fileID: 11187474}
   - {fileID: 768529943}
   - {fileID: 1547429439}
-  - {fileID: 2093222252}
-  - {fileID: 83179394}
-  - {fileID: 352104193}
-  - {fileID: 555761635}
-  - {fileID: 2008153876}
-  - {fileID: 1069939598}
-  myColor: {r: 0, g: 1, b: 0, a: 1}
+  myColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &876619069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1170,7 +1170,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -4.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1480,10 +1480,6 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
       propertyPath: m_Name
       value: sourceRot
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 925dff4ae4eddf14e960355d95d7c3a8, type: 3}
       propertyPath: m_RootOrder
