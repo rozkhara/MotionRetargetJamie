@@ -9,6 +9,7 @@ public class DataProcess : MonoBehaviour
 
     private static readonly int _JOINTCOUNT = Constants.JOINTCOUNT;
     private static readonly int _TARGETFRAME = Constants.TARGETFRAME;
+    private int[] parent = {0, 0, 1, 2, 0, 4, 5, 0, 7, 8, 9, 8, 11, 12, 8, 14, 15};
 
     public int index { get; set; } = 0;
     public TextAsset textA;
@@ -17,13 +18,15 @@ public class DataProcess : MonoBehaviour
     public string dataChunk;   //could be replaced with integer value as the actual string value is never referenced currently
     private string[] temp = new string[_JOINTCOUNT * _TARGETFRAME];
     public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
+    public string[] Local = new string[_JOINTCOUNT * _TARGETFRAME];
+
     public int chunkIndex { get; set; }
     private int tempChunkIndex;
     public int loadedFrameCount { get; set; }
     public int refreshIndex { get; set; }
     public int inChunkFrame { get; set; }
 
-
+    
 
     public string[][] GetSData()
     {
@@ -57,6 +60,7 @@ public class DataProcess : MonoBehaviour
             lineData[i] = lineData[i].Replace(")", "");
             sData[i] = lineData[i].Split(" ");
         }
+        convertGtoL(sData, Local);
     }
 
     public void CheckFrameIndex()
@@ -119,4 +123,27 @@ public class DataProcess : MonoBehaviour
     }
 
     private string[] GetColumn(string[][] inputArr, int column) => Enumerable.Range(0, inputArr.Length).Select(x => inputArr[x][column]).ToArray();
+
+    public void convertGtoL(string [][] sData, string [] Local)
+    {
+        string[] x = new string[_JOINTCOUNT];
+        string[] y = new string[_JOINTCOUNT];
+        string[] z = new string[_JOINTCOUNT];
+
+        for (int i = 0; i < sData.Length / _JOINTCOUNT; i++)
+        {
+            for (int j = 0; j < _JOINTCOUNT; j++)
+            {
+                Debug.LogFormat("sData[{0}] : {1} {2} {3}", i * _JOINTCOUNT + j, sData[i * _JOINTCOUNT + j][2], sData[i * _JOINTCOUNT + j][3], sData[i * _JOINTCOUNT + j][4]);
+                x[j] = (float.Parse(sData[i * _JOINTCOUNT + j][2]) - float.Parse(sData[i * _JOINTCOUNT + parent[j]][2])).ToString();
+                y[j] = (float.Parse(sData[i * _JOINTCOUNT + j][3]) - float.Parse(sData[i * _JOINTCOUNT + parent[j]][3])).ToString();
+                z[j] = (float.Parse(sData[i * _JOINTCOUNT + j][4]) - float.Parse(sData[i * _JOINTCOUNT + parent[j]][4])).ToString();
+                Debug.LogFormat("new sData[{0}] : {1} {2} {3}", i * _JOINTCOUNT + j, sData[i * _JOINTCOUNT + j][2], sData[i * _JOINTCOUNT + j][3], sData[i * _JOINTCOUNT + j][4]);
+                Local[i * _JOINTCOUNT + j] = x[j] + " " + y[j] + " " + z[j];
+                //sData[i * _JOINTCOUNT + j][2] = x[j];
+                //sData[i * _JOINTCOUNT + j][3] = y[j];
+                //sData[i * _JOINTCOUNT + j][4] = z[j]; 
+            }
+        }
+    }
 }

@@ -214,7 +214,7 @@ public class CalculateRotAngle : MonoBehaviour
         {
             for (int i = 0; i < childNodes.Length; i++)
             {
-                childNodes[i].rotation = qInfo.qPre[i] * childNodes[i].rotation * qInfo.qPost[i];
+                childNodes[i].rotation = qInfo.qPre[i] * childNodes[i].rotation * qInfo.qPost[i];                
                 //childNodes[i].localRotation = qInfo.qPre[i] * childNodes[i].localRotation * qInfo.qPost[i];
             }
         }
