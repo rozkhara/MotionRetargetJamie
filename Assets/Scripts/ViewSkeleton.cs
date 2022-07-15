@@ -6,6 +6,7 @@ public class ViewSkeleton : MonoBehaviour
 {
     public Transform rootNode;
     public Transform[] childNodes;
+    public Color myColor;
 
     void OnDrawGizmos()
     {
@@ -25,13 +26,13 @@ public class ViewSkeleton : MonoBehaviour
                 {
                     //list includes the root, if root then larger, green cube
                     Gizmos.color = Color.green;
-                    Gizmos.DrawCube(child.position, new Vector3(.1f, .1f, .1f));
+                    Gizmos.DrawSphere(child.position, 0.05f);
                 }
                 else
                 {
-                    Gizmos.color = Color.blue;
+                    Gizmos.color = myColor;
                     Gizmos.DrawLine(child.position, child.parent.position);
-                    Gizmos.DrawCube(child.position, new Vector3(.01f, .01f, .01f));
+                    Gizmos.DrawSphere(child.position, 0.01f);
                 }
             }
 

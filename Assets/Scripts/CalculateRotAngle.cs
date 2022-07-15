@@ -95,13 +95,13 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_FootR];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_ToeR];
+        //jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_ToeR];
 
         //Left Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_FootL];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeL].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_ToeL];
+        //jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeL].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_ToeL];
 
         //Spinal
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_Hips];

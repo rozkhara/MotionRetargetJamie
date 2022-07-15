@@ -245,7 +245,7 @@ public class TposeAlignment : MonoBehaviour
         //뼈의 길이와 방향 정보를 이용해 각 transform의 position 결정
         foreach (Transform child in childNodes)
         {
-            if (child.name != "Tpose" && child.name != "base")
+            if (!child.name.Contains("Tpose") && !child.name.Contains("base"))
             {
                 SourceBoneIndex s = (SourceBoneIndex)System.Enum.Parse(typeof(SourceBoneIndex), child.name);
                 calcTransform((int)s, child);
