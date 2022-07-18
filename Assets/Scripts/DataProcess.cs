@@ -142,7 +142,7 @@ public class DataProcess : MonoBehaviour
                 return;
             }
         }
-        
+
     }
 
     public static DataProcess Instance
