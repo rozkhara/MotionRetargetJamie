@@ -28,7 +28,7 @@ public class TemugeTest : MonoBehaviour
                                     new Vector4(0.0f, 0.0f, 1.0f),
                                     new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 
-        var R = C.transpose * R_uvw * C;
+        var R = C.transpose * R_uvw * C; //This has to be matmul (@) not casual dot product
         return R;
     }
 
