@@ -4,6 +4,11 @@ In this (https://github.com/digital-standard/ThreeDPoseUnityBarracuda/blob/maste
 the child-parent relationship is only set for linear relationships (divided into 4 limbs and spinal)
 There seems to be no child-parent relationship set for neck-shoulders although there exists a bone that connects the two.
 
+Check if averaging quaternion can resolve this issue (https://forum.unity.com/threads/average-quaternions.86898/)
+
+https://temugeb.github.io/python/motion_capture/2021/09/16/joint_rotations.html <- Estimating joint angles from 3D body poses
+https://github.com/TemugeB/joint_angles_calculate	<- same but written code
+
 Test if this implementation is sufficient enough for our case, if not, reimplement with one of the first two suggestions from the topmost link,
 or from the other paper I found. (MotioNet 3D Human Motion Reconstruction from Monoc)
 In this paper, it regards the rotation value as unobtainable value from the position, and integrates it into the deep learning model.

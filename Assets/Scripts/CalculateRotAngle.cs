@@ -124,14 +124,14 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeR];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
 
         //Left Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeL];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
 
         //Spinal
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest];
