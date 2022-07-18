@@ -18,7 +18,6 @@ public class CalculateRotAngle : MonoBehaviour
 
     private TposeAlignment TPA;
 
-
     private JointPoint[] jointPoints;
     public JointPoint[] JointPoints { get { return jointPoints; } }
 
@@ -31,7 +30,7 @@ public class CalculateRotAngle : MonoBehaviour
 
     public class JointPoint
     {
-        public Vector3 jointPosition = new Vector3();
+        public Vector3 jointPosition = new();
         public Transform boneTransform = null;
         public Quaternion initRotation;
         public Quaternion inverse;
@@ -50,19 +49,12 @@ public class CalculateRotAngle : MonoBehaviour
     {
         TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
     }
+
     private void Update()
     {
         if (flag)
         {
-            //try
-            //{
-                Init();
-            
-            //}
-            //catch(System.Exception e)
-            //{
-            //    Debug.Log(e.Message);
-            //}
+            Init();
             flag = false;
         }
         if (t_flag)

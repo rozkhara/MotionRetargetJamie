@@ -4,22 +4,6 @@ In this (https://github.com/digital-standard/ThreeDPoseUnityBarracuda/blob/maste
 the child-parent relationship is only set for linear relationships (divided into 4 limbs and spinal)
 There seems to be no child-parent relationship set for neck-shoulders although there exists a bone that connects the two.
 
-foreach (var jointPoint in jointPoints)
-        {
-            if (jointPoint.Parent != null)
-            {
-                var fv = jointPoint.Parent.Pos3D - jointPoint.Pos3D;
-                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Pos3D - jointPoint.Child.Pos3D, fv) * jointPoint.InverseRotation;
-            }
-            else if (jointPoint.Child != null)
-            {
-                jointPoint.Transform.rotation = Quaternion.LookRotation(jointPoint.Pos3D - jointPoint.Child.Pos3D, forward) * jointPoint.InverseRotation;
-            }
-        }
-
-this seems to be enough for the joints
-
-
 Test if this implementation is sufficient enough for our case, if not, reimplement with one of the first two suggestions from the topmost link,
 or from the other paper I found. (MotioNet 3D Human Motion Reconstruction from Monoc)
 In this paper, it regards the rotation value as unobtainable value from the position, and integrates it into the deep learning model.
