@@ -16,6 +16,10 @@ public class CalculateRotAngle : MonoBehaviour
     public Transform s_rootNode;
     public Transform[] s_childNodes;
 
+    private Vector3 initPosition;
+
+    public Transform parentTransform;
+
     private TposeAlignment TPA;
 
     private JointPoint[] jointPoints;
@@ -124,14 +128,14 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeR];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
 
         //Left Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeL];
         //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
 
         //Spinal
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest];
@@ -164,9 +168,9 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.inverseRotation = jp.inverse * jp.initRotation;
             }
         }
+        initPosition = jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform.position;
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation = jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverse * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].initRotation;
-
 
         return JointPoints;
     }
@@ -269,9 +273,8 @@ public class CalculateRotAngle : MonoBehaviour
         Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].jointPosition,
            jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].jointPosition,
            jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].jointPosition);
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform.position = jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].jointPosition;
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform.rotation = Quaternion.LookRotation(forward) * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation;
-
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform.SetPositionAndRotation(jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].jointPosition + initPosition,
+                                                                                                        Quaternion.LookRotation(forward) * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation);
         foreach (JointPoint jp in jointPoints)
         {
             if (jp.parent != null)
