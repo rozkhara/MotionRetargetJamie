@@ -57,7 +57,7 @@ public class PositionWiseUpdate : MonoBehaviour
                 }
                 else
                 {
-                    newTransform[i] = new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / _SCALEFACTOR, 
+                    newTransform[i] = new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + i][2]) / _SCALEFACTOR,
                         float.Parse(sData[DataProcess.Instance.chunkIndex + i][4]) / _SCALEFACTOR,
                         float.Parse(sData[DataProcess.Instance.chunkIndex + i][3]) / _SCALEFACTOR);
                     if (i == 0)

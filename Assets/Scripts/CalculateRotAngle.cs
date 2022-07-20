@@ -82,7 +82,6 @@ public class CalculateRotAngle : MonoBehaviour
                 RotUpdate_s();
             }
         }
-        
     }
 
     public JointPoint[] Init()
@@ -286,7 +285,7 @@ public class CalculateRotAngle : MonoBehaviour
                 {
                     Vector3 fv = jp.parent.jointPosition - jp.jointPosition;
                     jp.boneTransform.rotation = Quaternion.LookRotation(jp.jointPosition - jp.child.jointPosition, fv) * jp.inverseRotation;
-                }                
+                }
             }
             else if (jp.child != null)
             {

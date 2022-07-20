@@ -16,25 +16,25 @@ public static class Constants
         Cha_Cape_0,
         Cha_Cape_1,
         Cha_Cape_2,
-        
+
         Cha_UpperArmL,
         Cha_LowerArmL,
         Cha_HandL,
         BodyHandL,
-        
+
         Cha_UpperArmR,
         Cha_LowerArmR,
         Cha_HandR,
         BodyHandR,
-        
+
         Cha_Wing_L,
         Cha_Wing_R,
-        
+
         Face,
         Cha_Antenna_L,
         Cha_Antenna_R,
         Cha_HeadDummy,
-        
+
         Cha_UpperLegL,
         Cha_LowerLegL,
         Cha_FootL,
@@ -52,7 +52,7 @@ public static class Constants
     public enum SourcePositionIndex : int
     {
         bottom_torso = 0,
-        
+
         right_hip,
         right_knee,
         right_foot,
