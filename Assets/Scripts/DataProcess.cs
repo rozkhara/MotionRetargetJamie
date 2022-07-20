@@ -14,20 +14,16 @@ public class DataProcess : MonoBehaviour
     public TextAsset textA;
     public string[] lineData;
     private string data;
-    public int dataLength = 0;
+    private int dataLength = 0;
     public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
     public int chunkIndex { get; set; }
     private int tempChunkIndex;
-    private int lastFrameIndex = -1;
     public int loadedFrameCount { get; set; }
     public int refreshIndex { get; set; }
     public int inChunkFrame { get; set; }
 
     public bool parseFlag { get; set; } = false;
-    private bool flag = true;
-    private bool eofFlag = false;
-
-
+    public bool flag { get; set; } = true;
 
     public string[][] GetSData()
     {
@@ -36,32 +32,19 @@ public class DataProcess : MonoBehaviour
 
     public void UpdateDataChunk()
     {
-        //data = data.Remove(0, dataChunk.Length);
-        if (!eofFlag)
-        {
-            data = data.Remove(0, dataLength);
-            RefreshDataChunk();
-        }
-        else
-        {
-            throw new System.Exception("EOF detected-by data");
-        }
+        data = data.Remove(0, dataLength);
+        RefreshDataChunk();
     }
 
     private void RefreshDataChunk()
-   {
+    {
         System.Array.Clear(lineData, 0, lineData.Length);
         System.Array.Clear(sData, 0, sData.Length);
-        eofFlag = false;
         lineData = data.Split("\n", (_JOINTCOUNT * _TARGETFRAME) + 1);
-        if (lineData.Length == 0)
+        if (lineData.Length == 0 || lineData[^1] == "")
         {
             dataLength = 0;
-            throw new System.Exception("EOF detected-by length");
-        }
-        if (lineData[^1] == "")
-        {
-            eofFlag = true;
+            throw new System.Exception("EOF detected");
         }
         dataLength = 0;
         for (int i = 0; i < lineData.Length - 1; i++)
@@ -77,24 +60,10 @@ public class DataProcess : MonoBehaviour
             lineData[i] = lineData[i].Replace(")", "");
             sData[i] = lineData[i].Split(" ");
         }
-        if (eofFlag)
-        {
-            lastFrameIndex = int.Parse(sData[lineData.Length - 2][0]);
-        }
     }
 
     public void CheckFrameIndex()
     {
-        if (eofFlag)
-        {
-            if (index == lastFrameIndex-1)
-            {
-                Debug.Log(lastFrameIndex);
-
-                UpdateDataChunk();
-                return;
-            }
-        }
         string[] firstColArr = GetColumn(sData, 0);
         if (firstColArr.Contains(index.ToString())) //if current frame exists within the loaded frames
         {
@@ -128,8 +97,7 @@ public class DataProcess : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 30;
-
+        Application.targetFrameRate = -1;
         data = textA.text.ToString();
         if (null == instance)
         {
@@ -152,7 +120,7 @@ public class DataProcess : MonoBehaviour
                     UpdateDataChunk();
                     parseFlag = true;
                 }
-                catch (System.Exception e) when (false)
+                catch (System.Exception e)
                 {
                     Debug.Log(e.Message);
                     parseFlag = false;
@@ -165,7 +133,7 @@ public class DataProcess : MonoBehaviour
                 CheckFrameIndex();
                 parseFlag = true;
             }
-            catch (System.Exception e) when (false)
+            catch (System.Exception e)
             {
                 Debug.Log(e.Message);
                 parseFlag = false;

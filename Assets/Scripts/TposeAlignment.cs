@@ -57,7 +57,6 @@ public class TposeAlignment : MonoBehaviour
     {
         SourceBones = new Bone[(int)SourceBoneIndex.count];
         for (int i = 0; i < (int)SourceBoneIndex.count; i++) SourceBones[i] = new Bone();
-
         a = GameObject.Find("sourcePositionWise").GetComponent<PositionWiseUpdate>();
         if (rootNode != null)
         {
@@ -67,7 +66,6 @@ public class TposeAlignment : MonoBehaviour
                 childNodes = rootNode.GetComponentsInChildren<Transform>();
             }
         }
-
         if (t_rootNode != null)
         {
             if (t_childNodes == null || t_childNodes.Length == 0)
@@ -93,7 +91,6 @@ public class TposeAlignment : MonoBehaviour
 
     void Init()
     {
-
         //pose text에서 bone의 길이 가져오기
         SourceBones[(int)SourceBoneIndex.spine].BoneLength = Vector3.Distance(a.firstTransform[0], a.firstTransform[7]);
         SourceBones[(int)SourceBoneIndex.chest].BoneLength = Vector3.Distance(a.firstTransform[7], a.firstTransform[8]);
@@ -116,7 +113,6 @@ public class TposeAlignment : MonoBehaviour
         SourceBones[(int)SourceBoneIndex.lLowerArm].BoneLength = Vector3.Distance(a.firstTransform[11], a.firstTransform[12]);
         SourceBones[(int)SourceBoneIndex.lHand].BoneLength = Vector3.Distance(a.firstTransform[12], a.firstTransform[13]);
 
-
         //target skeleton의 정보를 받아와서 bone의 orientation 반영 (localPosition을 이용해 자식의 부모기준 위치를 받아옴)
         SourceBones[(int)SourceBoneIndex.spine].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Hips].GetChild(0).localPosition);
         SourceBones[(int)SourceBoneIndex.chest].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Spine].GetChild(0).localPosition);
@@ -131,11 +127,13 @@ public class TposeAlignment : MonoBehaviour
         SourceBones[(int)SourceBoneIndex.lLowerLeg].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegL].GetChild(0).localPosition);
         SourceBones[(int)SourceBoneIndex.lFoot].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_FootL].GetChild(0).localPosition);
 
-        SourceBones[(int)SourceBoneIndex.rUpperArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(2).localPosition - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(1).localPosition);
+        SourceBones[(int)SourceBoneIndex.rUpperArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(2).localPosition
+                                                                                    - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(1).localPosition);
         SourceBones[(int)SourceBoneIndex.rLowerArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmR].GetChild(0).localPosition);
         SourceBones[(int)SourceBoneIndex.rHand].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_HandR].GetChild(0).localPosition);
 
-        SourceBones[(int)SourceBoneIndex.lUpperArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(1).localPosition - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(2).localPosition);
+        SourceBones[(int)SourceBoneIndex.lUpperArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(1).localPosition 
+                                                                                    - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(2).localPosition);
         SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].GetChild(0).localPosition);
         SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_HandL].GetChild(0).localPosition);  //target과 source skeleton의 위상이 다르므로, 양 UpperArm은 서로의 좌표를 이용해 구함
 

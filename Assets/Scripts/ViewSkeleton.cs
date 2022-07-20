@@ -17,11 +17,8 @@ public class ViewSkeleton : MonoBehaviour
                 //get all joints to draw
                 PopulateChildren();
             }
-
-
             foreach (Transform child in childNodes)
             {
-
                 if (child == rootNode)
                 {
                     //list includes the root, if root then larger, green cube
@@ -38,6 +35,7 @@ public class ViewSkeleton : MonoBehaviour
 
         }
     }
+
     public void PopulateChildren()
     {
         childNodes = rootNode.GetComponentsInChildren<Transform>();
