@@ -79,7 +79,7 @@ public class DataProcess : MonoBehaviour
         }
         if (eofFlag)
         {
-            lastFrameIndex = int.Parse(sData[^1][0]);
+            lastFrameIndex = int.Parse(sData[lineData.Length - 2][0]);
         }
     }
 
@@ -87,9 +87,11 @@ public class DataProcess : MonoBehaviour
     {
         if (eofFlag)
         {
-            if (index == lastFrameIndex)
+            if (index == lastFrameIndex-1)
             {
-                RefreshDataChunk();
+                Debug.Log(lastFrameIndex);
+
+                UpdateDataChunk();
                 return;
             }
         }
@@ -126,7 +128,7 @@ public class DataProcess : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = 30;
 
         data = textA.text.ToString();
         if (null == instance)
@@ -163,7 +165,7 @@ public class DataProcess : MonoBehaviour
                 CheckFrameIndex();
                 parseFlag = true;
             }
-            catch (System.Exception e)
+            catch (System.Exception e) when (false)
             {
                 Debug.Log(e.Message);
                 parseFlag = false;
