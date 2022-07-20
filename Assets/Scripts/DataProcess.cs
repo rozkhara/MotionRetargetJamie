@@ -14,17 +14,18 @@ public class DataProcess : MonoBehaviour
     public TextAsset textA;
     public string[] lineData;
     private string data;
-    public string dataChunk;   //could be replaced with integer value as the actual string value is never referenced currently
-    private string[] temp = new string[_JOINTCOUNT * _TARGETFRAME];
+    public int dataLength = 0;
     public string[][] sData = new string[_JOINTCOUNT * _TARGETFRAME][];
     public int chunkIndex { get; set; }
     private int tempChunkIndex;
+    private int lastFrameIndex = -1;
     public int loadedFrameCount { get; set; }
     public int refreshIndex { get; set; }
     public int inChunkFrame { get; set; }
 
     public bool parseFlag { get; set; } = false;
     private bool flag = true;
+    private bool eofFlag = false;
 
 
 
@@ -35,35 +36,63 @@ public class DataProcess : MonoBehaviour
 
     public void UpdateDataChunk()
     {
-        data = data.Remove(0, dataChunk.Length);
-        RefreshDataChunk();
+        //data = data.Remove(0, dataChunk.Length);
+        if (!eofFlag)
+        {
+            data = data.Remove(0, dataLength);
+            RefreshDataChunk();
+        }
+        else
+        {
+            throw new System.Exception("EOF detected-by data");
+        }
     }
 
     private void RefreshDataChunk()
-    {
+   {
         System.Array.Clear(lineData, 0, lineData.Length);
         System.Array.Clear(sData, 0, sData.Length);
+        eofFlag = false;
         lineData = data.Split("\n", (_JOINTCOUNT * _TARGETFRAME) + 1);
-        if (lineData.Length == 0 || lineData[lineData.Length - 1] == "")
+        if (lineData.Length == 0)
         {
-            dataChunk = "";     //This necessarily frees the last chunk loaded, thus in future the whole determination process needs to be performed per frame, not per 30 frames
-            throw new System.Exception("EOF detected");
+            dataLength = 0;
+            throw new System.Exception("EOF detected-by length");
         }
-        System.Array.Copy(lineData, temp, lineData.Length - 1);
-        dataChunk = string.Join("\n", temp) + "\n";
-        loadedFrameCount = temp.Length / _JOINTCOUNT;
+        if (lineData[^1] == "")
+        {
+            eofFlag = true;
+        }
+        dataLength = 0;
+        for (int i = 0; i < lineData.Length - 1; i++)
+        {
+            dataLength += lineData[i].Length + 1;
+        }
+        loadedFrameCount = (lineData.Length - 1) / _JOINTCOUNT;
         refreshIndex = index + loadedFrameCount;
         inChunkFrame = 0;
-        for (int i = 0; i < temp.Length; i++)
+        for (int i = 0; i < (lineData.Length - 1); i++)
         {
             lineData[i] = lineData[i].Replace("(", "");
             lineData[i] = lineData[i].Replace(")", "");
             sData[i] = lineData[i].Split(" ");
         }
+        if (eofFlag)
+        {
+            lastFrameIndex = int.Parse(sData[^1][0]);
+        }
     }
 
     public void CheckFrameIndex()
     {
+        if (eofFlag)
+        {
+            if (index == lastFrameIndex)
+            {
+                RefreshDataChunk();
+                return;
+            }
+        }
         string[] firstColArr = GetColumn(sData, 0);
         if (firstColArr.Contains(index.ToString())) //if current frame exists within the loaded frames
         {
@@ -85,7 +114,7 @@ public class DataProcess : MonoBehaviour
                 return;
                 //throw new System.Exception("Wait until index comes");
             }
-            else if (int.Parse(firstColArr[firstColArr.Length - 1]) < index)    //if current frame is greater than read frame
+            else if (int.Parse(firstColArr[^1]) < index)    //if current frame is greater than read frame
             {
                 UpdateDataChunk();      //load new chunk
                 return;
@@ -97,7 +126,7 @@ public class DataProcess : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = -1;
 
         data = textA.text.ToString();
         if (null == instance)
@@ -121,7 +150,7 @@ public class DataProcess : MonoBehaviour
                     UpdateDataChunk();
                     parseFlag = true;
                 }
-                catch (System.Exception e)
+                catch (System.Exception e) when (false)
                 {
                     Debug.Log(e.Message);
                     parseFlag = false;
