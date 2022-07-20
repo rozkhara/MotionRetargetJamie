@@ -70,73 +70,29 @@ public class PositionWiseUpdate : MonoBehaviour
                     }
                 }
             }
-            foreach (Transform child in childNodes)
-            {
-                if (child.name.Contains("Hips"))
-                {
-                    child.position = newTransform[0];
-                }
-                else if (child.name.Contains("Spine"))
-                {
-                    child.position = newTransform[7];
-                }
-                else if (child.name.Contains("Chest"))
-                {
-                    child.position = newTransform[8];
-                }
-                else if (child.name.Contains("UpperArmL"))
-                {
-                    child.position = newTransform[11];
-                }
-                else if (child.name.Contains("UpperArmR"))
-                {
-                    child.position = newTransform[14];
-                }
-                else if (child.name.Contains("UpperLegL"))
-                {
-                    child.position = newTransform[4];
-                }
-                else if (child.name.Contains("UpperLegR"))
-                {
-                    child.position = newTransform[1];
-                }
-                else if (child.name.Contains("LowerArmL"))
-                {
-                    child.position = newTransform[12];
-                }
-                else if (child.name.Contains("LowerArmR"))
-                {
-                    child.position = newTransform[15];
-                }
-                else if (child.name.Contains("LowerLegL"))
-                {
-                    child.position = newTransform[5];
-                }
-                else if (child.name.Contains("LowerLegR"))
-                {
-                    child.position = newTransform[2];
-                }
-                else if (child.name.Contains("FootL"))
-                {
-                    child.position = newTransform[6];
-                }
-                else if (child.name.Contains("FootR"))
-                {
-                    child.position = newTransform[3];
-                }
-                else if (child.name.Contains("Cha_HandL"))
-                {
-                    child.position = newTransform[13];
-                }
-                else if (child.name.Contains("Cha_HandR"))
-                {
-                    child.position = newTransform[16];
-                }
-                else if (child.name.Contains("Face"))
-                {
-                    child.position = newTransform[10];
-                }
-            }
+
+            childNodes[(int)Constants.TargetPositionIndex.Cha_Hips].position = newTransform[0];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_Spine].position = newTransform[7];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].position = newTransform[8];
+
+            childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL].position = newTransform[11];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].position = newTransform[12];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_HandL].position = newTransform[13];
+
+            childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmR].position = newTransform[14];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmR].position = newTransform[15];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_HandR].position = newTransform[16];
+
+            childNodes[(int)Constants.TargetPositionIndex.Face].position = newTransform[10];
+
+            childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegL].position = newTransform[4];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegL].position = newTransform[5];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_FootL].position = newTransform[6];
+
+            childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR].position = newTransform[1];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegR].position = newTransform[2];
+            childNodes[(int)Constants.TargetPositionIndex.Cha_FootR].position = newTransform[3];
+
             DataProcess.Instance.index++;
         }
     }
