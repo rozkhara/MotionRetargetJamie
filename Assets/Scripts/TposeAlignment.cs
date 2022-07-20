@@ -274,14 +274,14 @@ public class TposeAlignment : MonoBehaviour
             {
                 qPre.Add(perJointRotTargetLocal[i] * Quaternion.Inverse(perJointRotTargetGlobal[i]) * perJointRotSourceGlobal[j] * Quaternion.Inverse(perJointRotSourceLocal[j]));
                 qPost.Add(Quaternion.Inverse(perJointRotSourceGlobal[j]) * perJointRotTargetGlobal[i]);
-                //Debug.LogFormat("qPre : {0}*{1}*{2}*{3}\nqPost : {4}*{5}", perJointRotTargetLocal[i], Quaternion.Inverse(perJointRotTargetGlobal[i]), perJointRotSourceGlobal[j], Quaternion.Inverse(perJointRotSourceLocal[j]), Quaternion.Inverse(perJointRotSourceGlobal[j]), perJointRotTargetGlobal[i]);
+                Debug.LogFormat("qPre : {0}*{1}*{2}*{3}\nqPost : {4}*{5}", perJointRotTargetLocal[i], Quaternion.Inverse(perJointRotTargetGlobal[i]), perJointRotSourceGlobal[j], Quaternion.Inverse(perJointRotSourceLocal[j]), Quaternion.Inverse(perJointRotSourceGlobal[j]), perJointRotTargetGlobal[i]);
             }
             else
             {
                 qPre.Add(Quaternion.identity);
                 qPost.Add(Quaternion.identity);
             }
-            //Debug.LogFormat("qPre[{0}] : {1} qPost[{0}] : {2} qPre[{0}] * qPost[{0}] : {3}\nj : {4}", i, qPre[i], qPost[i], qPre[i] * qPost[i], j);
+            Debug.LogFormat("qPre[{0}] : {1} qPost[{0}] : {2} qPre[{0}] * qPost[{0}] : {3}\nj : {4}", i, qPre[i], qPost[i], qPre[i] * qPost[i], j);
         }
 
     }
