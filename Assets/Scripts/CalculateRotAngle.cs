@@ -17,8 +17,10 @@ public class CalculateRotAngle : MonoBehaviour
     public Transform[] s_childNodes;
 
     private Vector3 initPosition;
+    private Vector3 s_initPosition;
 
     public Transform parentTransform;
+    public Transform s_parentTransform;
 
     private TposeAlignment TPA;
 
@@ -260,6 +262,7 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.inverseRotation = jp.inverse * jp.initRotation;
             }
         }
+        s_initPosition = s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].boneTransform.position;
         s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
         s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation = s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverse * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].initRotation;
 
@@ -331,8 +334,8 @@ public class CalculateRotAngle : MonoBehaviour
         Vector3 forward = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition,
            s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].jointPosition,
            s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition);
-        //s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Hips].boneTransform.position = s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Hips].jointPosition;
-        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform.rotation = Quaternion.LookRotation(forward) * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation;
+        s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].boneTransform.SetPositionAndRotation(s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].jointPosition + s_initPosition,
+                                                                                                        Quaternion.LookRotation(forward) * s_jointPoints[(int)Constants.SourcePositionIndex.bottom_torso].inverseRotation);
 
         foreach (JointPoint jp in s_jointPoints)
         {
@@ -384,6 +387,7 @@ public class CalculateRotAngle : MonoBehaviour
 
         //Vector3 forward = TriangleNormal(s_jointPoints[(int)Constants.SourcePositionIndex.Cha_Spine], s_jointPoints[(int)Constants.SourcePositionIndex.Cha_UpperLegL], )
     }
+
     public Quaternion GetInverse(JointPoint p1, JointPoint p2, Vector3 vec)
     {
         return Quaternion.Inverse(Quaternion.LookRotation(p1.boneTransform.position - p2.boneTransform.position, vec));
@@ -398,6 +402,11 @@ public class CalculateRotAngle : MonoBehaviour
         return Vector3.Normalize(returnVal);
     }
 
+    Vector3 RotateAround(Vector3 position, Vector3 pivot, Quaternion rotation)
+    {
+        return rotation * (position - pivot) + pivot;
+    }
+
     public void PopulateChildren()
     {
         childNodes = rootNode.GetComponentsInChildren<Transform>();
@@ -407,6 +416,7 @@ public class CalculateRotAngle : MonoBehaviour
     private void GetNT()
     {
         sData = DataProcess.Instance.GetSData();
+        var rotation = parentTransform.rotation;
 
         //Right Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].jointPosition =
@@ -414,9 +424,9 @@ public class CalculateRotAngle : MonoBehaviour
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hip][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hip][3]) / _SCALEFACTOR);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].jointPosition =
-            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][2]) / _SCALEFACTOR,
-                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][4]) / _SCALEFACTOR,
-                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][3]) / _SCALEFACTOR);
+                    new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][2]) / _SCALEFACTOR,
+                            float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][4]) / _SCALEFACTOR,
+                            float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_knee][3]) / _SCALEFACTOR);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].jointPosition =
             new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_foot][2]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_foot][4]) / _SCALEFACTOR,
@@ -481,11 +491,32 @@ public class CalculateRotAngle : MonoBehaviour
             new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][2]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][3]) / _SCALEFACTOR);
+
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].jointPosition, initPosition, rotation);
+
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].jointPosition, initPosition, rotation);
+
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Face].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Face].jointPosition, initPosition, rotation);
+
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].jointPosition, initPosition, rotation);
+
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].jointPosition, initPosition, rotation);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].jointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].jointPosition, initPosition, rotation);
     }
 
     private void GetNT_s()
     {
         sData = DataProcess.Instance.GetSData();
+        var rotation = s_parentTransform.rotation;
 
         //Right Leg
         s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition =
@@ -564,5 +595,26 @@ public class CalculateRotAngle : MonoBehaviour
             new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][2]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.right_hand][3]) / _SCALEFACTOR);
+
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_hip].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_knee].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_knee].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_foot].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_foot].jointPosition, s_initPosition, rotation);
+
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.left_hip].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_knee].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.left_knee].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_foot].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.left_foot].jointPosition, s_initPosition, rotation);
+
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.center_torso].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.upper_torso].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.neck_base].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.neck_base].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.center_head].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.center_head].jointPosition, s_initPosition, rotation);
+
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.left_shoulder].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.left_elbow].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.left_hand].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.left_hand].jointPosition, s_initPosition, rotation);
+
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_shoulder].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_elbow].jointPosition, s_initPosition, rotation);
+        s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].jointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].jointPosition, s_initPosition, rotation);
     }
 }

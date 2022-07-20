@@ -1549,6 +1549,7 @@ MonoBehaviour:
   - {fileID: 768529943}
   - {fileID: 1547429439}
   parentTransform: {fileID: 241657228}
+  s_parentTransform: {fileID: 876619070}
 --- !u!114 &1714372485
 MonoBehaviour:
   m_ObjectHideFlags: 0
