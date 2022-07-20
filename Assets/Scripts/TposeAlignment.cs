@@ -9,21 +9,21 @@ public enum SourceBoneIndex : int //부모에서 해당 joint까지의 뼈
     neck,
     head,
 
-    lUpperArm,
-    lLowerArm,
-    lHand,
-
-    rUpperArm,
-    rLowerArm,
-    rHand,
+    rUpperLeg,
+    rLowerLeg,
+    rFoot,
 
     lUpperLeg,
     lLowerLeg,
     lFoot,
 
-    rUpperLeg,
-    rLowerLeg,
-    rFoot,
+    rUpperArm,
+    rLowerArm,
+    rHand,
+
+    lUpperArm,
+    lLowerArm,
+    lHand,
 
     count,
 }
@@ -37,12 +37,6 @@ public class TposeAlignment : MonoBehaviour
     public List<Quaternion> perJointRotTargetGlobal;     //Rd G
     public List<Quaternion> perJointRotTargetLocal;    //qd init
     public bool flag = true;
-
-    public List<Quaternion> qPre;
-    public List<Quaternion> qPost;
-
-    //임시
-    private int[] targetPair = {0, 1, 2, -1, -1, -1, 5, 6, 7, -1, 8, 9, 10, -1, -1, -1, 3, -1, -1, -1, 11, 12, 13, -1, 14, 15, 16, -1 };
 
     public Transform t_rootNode;         //target skeleton의 transform (원본 Chr_Hips)
     public Transform[] t_childNodes;
@@ -257,7 +251,6 @@ public class TposeAlignment : MonoBehaviour
                 calcTransform((int)s, child);
             }
         }
-
         for (int i = 0; i < childNodes.Length; i++)
         {
             perJointRotSourceGlobal.Add(childNodes[i].rotation);
@@ -267,23 +260,7 @@ public class TposeAlignment : MonoBehaviour
         {
             perJointRotTargetGlobal.Add(t_childNodes[i].rotation);
             perJointRotTargetLocal.Add(t_childNodes[i].localRotation);
-
-            //임시
-            int j = targetPair[i];
-            if (j != -1)
-            {
-                qPre.Add(perJointRotTargetLocal[i] * Quaternion.Inverse(perJointRotTargetGlobal[i]) * perJointRotSourceGlobal[j] * Quaternion.Inverse(perJointRotSourceLocal[j]));
-                qPost.Add(Quaternion.Inverse(perJointRotSourceGlobal[j]) * perJointRotTargetGlobal[i]);
-                Debug.LogFormat("qPre : {0}*{1}*{2}*{3}\nqPost : {4}*{5}", perJointRotTargetLocal[i], Quaternion.Inverse(perJointRotTargetGlobal[i]), perJointRotSourceGlobal[j], Quaternion.Inverse(perJointRotSourceLocal[j]), Quaternion.Inverse(perJointRotSourceGlobal[j]), perJointRotTargetGlobal[i]);
-            }
-            else
-            {
-                qPre.Add(Quaternion.identity);
-                qPost.Add(Quaternion.identity);
-            }
-            Debug.LogFormat("qPre[{0}] : {1} qPost[{0}] : {2} qPre[{0}] * qPost[{0}] : {3}\nj : {4}", i, qPre[i], qPost[i], qPre[i] * qPost[i], j);
         }
-
     }
 
     void calcTransform(int bone, Transform child)
