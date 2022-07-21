@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class TemugeTest : MonoBehaviour
 {
-    public Dictionary<Constants.SourcePositionIndex, Vector3> frame_pos { get; set; }
-    public Transform parentObjectTransform;
+    public Dictionary<Constants.SourcePositionIndex, Vector3> frame_pos = new(); //locally defined position
+    public Transform parentObjectTransform;     //for object rotation
 
-    private Joint[] joints;
+    private Joint[] joints;     //for parent-child relationship || isnt it possible to just use childnodes? 
     public Joint[] Joints { get { return joints; } }
+
+    public Transform rootNode;
+    private Transform[] childNodes;
+
+    private TposeAlignment TPA;
+    private bool t_flag = true;
 
     public class Joint
     {
@@ -17,18 +23,35 @@ public class TemugeTest : MonoBehaviour
         public List<Joint> child = null;
     }
 
+    private void Awake()
+    {
+        TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
+    }
     private void Update()
     {
-        int count = 0;
-        foreach (Constants.SourcePositionIndex SPI in System.Enum.GetValues(typeof(Constants.SourcePositionIndex)))
+        if (t_flag)
         {
-            if (count == (int)Constants.SourcePositionIndex.Count)
+            if (!TPA.flag)
             {
-                break;
+                PopulateChildren();
+                t_flag = false;
             }
-            frame_pos[SPI] = Get_rotated_worldPos(SPI);
-            count++;
         }
+
+        if (DataProcess.Instance.parseFlag)
+        {
+            int count = 0;
+            foreach (Constants.SourcePositionIndex SPI in System.Enum.GetValues(typeof(Constants.SourcePositionIndex)))
+            {
+                if (count == (int)Constants.SourcePositionIndex.Count)
+                {
+                    break;
+                }
+                frame_pos[SPI] = Get_rotated_worldPos(SPI);
+                count++;
+            }
+        }
+            
     }
 
     private Matrix4x4 Get_R(Vector3 A, Vector3 B)
@@ -79,7 +102,7 @@ public class TemugeTest : MonoBehaviour
         float thetaY;
         float thetaX;
         Decompose_R_ZXY(C, out thetaZ, out thetaY, out thetaX);
-        Matrix4x4 root_rotation = 
+        Matrix4x4 root_rotation = new Matrix4x4();
     }
 
     private Matrix4x4 MatMul(Matrix4x4 matA, Matrix4x4 matB)    //not sure if this function returns correct value
@@ -115,4 +138,8 @@ public class TemugeTest : MonoBehaviour
 
     }
 
+    private void PopulateChildren()
+    {
+        childNodes = rootNode.GetComponentsInChildren<Transform>();
+    }
 }
