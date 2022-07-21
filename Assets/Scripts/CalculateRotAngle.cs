@@ -33,6 +33,7 @@ public class CalculateRotAngle : MonoBehaviour
 
     private bool flag = true;
     private bool t_flag = true;
+    public bool f_flag;
 
     public class JointPoint
     {
@@ -44,6 +45,13 @@ public class CalculateRotAngle : MonoBehaviour
 
         public JointPoint child = null;
         public JointPoint parent = null;
+
+        // For Kalman filter
+        public Vector3 P = new Vector3();
+        public Vector3 X = new Vector3();
+        public Vector3 K = new Vector3();
+
+        public Vector3[] PrevPos3D = new Vector3[6];
     }
 
     private void OnDrawGizmos()
