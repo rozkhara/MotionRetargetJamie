@@ -30,13 +30,14 @@ public class CalculateRotAngle : MonoBehaviour
     private JointPoint[] s_jointPoints;
     public JointPoint[] s_JointPoints { get { return s_jointPoints; } }
 
-    public float KalmanParamQ;
-    public float KalmanParamR;
-
+    public float KalmanParamQ = 0.001f;
+    public float KalmanParamR = 0.0015f;
 
     private bool flag = true;
     private bool t_flag = true;
     public bool f_flag;
+
+    private float LowPassParam = 0.1f;
 
     public class JointPoint
     {
@@ -524,6 +525,23 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].inputJointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].inputJointPosition, initPosition, rotation);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].inputJointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].inputJointPosition, initPosition, rotation);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].inputJointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].inputJointPosition, initPosition, rotation);
+
+        // Low pass filter
+        if (f_flag)
+        {
+            foreach (var jp in jointPoints)
+            {
+                //칼만 필터 적용을 위해서는 영상과 Barracuda를 이용해서 예측값을 estimatedJointPosition에 채워주어야 하는 것 같음!
+                //KalmanUpdate(jp);
+
+                jp.prevJointPosition[0] = jp.inputJointPosition;
+                for (var i = 1; i < jp.prevJointPosition.Length; i++)
+                {
+                    jp.prevJointPosition[i] = jp.prevJointPosition[i] * LowPassParam + jp.prevJointPosition[i - 1] * (1f - LowPassParam); 
+                }
+                jp.inputJointPosition = jp.prevJointPosition[jp.prevJointPosition.Length - 1];
+            }
+        }
     }
 
     private void GetNT_s()
