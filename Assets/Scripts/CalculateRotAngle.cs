@@ -92,6 +92,8 @@ public class CalculateRotAngle : MonoBehaviour
             JointPoints[i] = new JointPoint();
         }
 
+        //Assumes Tpose
+
         //Right Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].boneTransform = childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegR];

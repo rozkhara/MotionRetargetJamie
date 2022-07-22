@@ -11,7 +11,7 @@ public class TemugeTest : MonoBehaviour
     public Joint[] Joints { get { return joints; } }
 
     public Transform rootNode;
-    private Transform[] childNodes;
+    public Transform[] childNodes;
 
     private TposeAlignment TPA;
     private bool t_flag = true;
@@ -54,56 +54,28 @@ public class TemugeTest : MonoBehaviour
             
     }
 
-    private Matrix4x4 Get_R(Vector3 A, Vector3 B)
+    private Quaternion Get_hips_rot()          //root position is frame_pos[Constants.SourcePositionIndex.bottom_torso]
     {
-        Vector3 uA = A.normalized;
-        Vector3 uB = B.normalized;
-
-        float cos_t = Vector3.Dot(uA, uB);
-        float sin_t = Vector3.Cross(uA, uB).sqrMagnitude;
-
-        Vector3 u = uA;
-        Vector3 v = (uB - cos_t * uA).normalized;
-        Vector3 w = Vector3.Cross(uA, uB).normalized;
-
-        Matrix4x4 C = new Matrix4x4(new Vector4(u.x, u.y, u.z),
-                                new Vector4(v.x, v.y, v.z),
-                                new Vector4(w.x, w.y, w.z),
-                                new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-
-        Matrix4x4 R_uvw = new Matrix4x4(new Vector4(cos_t, -sin_t, 0.0f),
-                                    new Vector4(sin_t, cos_t, 0.0f),
-                                    new Vector4(0.0f, 0.0f, 1.0f),
-                                    new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-
-        Matrix4x4 R = MatMul(MatMul(C.transpose, R_uvw), C);
-        return R;
-    }
-
-    private void Decompose_R_ZXY(Matrix4x4 R, out float thetaZ, out float thetaY, out float thetaX)
-    {
-        thetaZ = Mathf.Atan2(-R[0, 1], R[1, 1]);
-        thetaY = Mathf.Atan2(-R[2, 0], R[2, 2]);
-        thetaX = Mathf.Atan2(R[2, 1], Mathf.Sqrt(R[2, 0] * R[2, 0] + R[2, 2] * R[2, 2]));
-    }
-
-    private void Get_hips_pos_rot()
-    {
-        // insert code here
         Vector3 root_u = (frame_pos[Constants.SourcePositionIndex.left_hip] - frame_pos[Constants.SourcePositionIndex.bottom_torso]).normalized;
         Vector3 root_v = (frame_pos[Constants.SourcePositionIndex.upper_torso] - frame_pos[Constants.SourcePositionIndex.bottom_torso]).normalized;
         Vector3 root_w = Vector3.Cross(root_u, root_v);
 
-        Matrix4x4 C = new Matrix4x4(new Vector4(root_u.x,root_u.y,root_u.z),
-                                    new Vector4(root_v.x,root_v.y,root_v.z),
-                                    new Vector4(root_w.x,root_w.y,root_w.z),
-                                    new Vector4(0.0f, 0.0f, 0.0f, 1.0f)).transpose;
-        float thetaZ;
-        float thetaY;
-        float thetaX;
-        Decompose_R_ZXY(C, out thetaZ, out thetaY, out thetaX);
-        Matrix4x4 root_rotation = new Matrix4x4();
+        return Quaternion.LookRotation(root_w, root_v);         //because Unity is LH, while input is RH
     }
+
+    private Quaternion Get_parental_joint_rotations(Transform curJoint)
+    {
+        if (curJoint == rootNode)
+        {
+            return rootNode.rotation;
+        }
+        if (curJoint.parent != null)
+        {
+            return curJoint.rotation * Get_parental_joint_rotations(curJoint.parent);
+        }
+        throw new System.Exception("Unexpected Input");
+    }
+
 
     private Matrix4x4 MatMul(Matrix4x4 matA, Matrix4x4 matB)    //not sure if this function returns correct value
     {
