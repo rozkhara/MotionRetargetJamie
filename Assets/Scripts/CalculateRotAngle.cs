@@ -39,6 +39,9 @@ public class CalculateRotAngle : MonoBehaviour
 
     private float LowPassParam = 0.1f;
 
+    public bool n_flag;
+    private Vector3 sNeckJoint;
+
     public class JointPoint
     {
         public Vector3 inputJointPosition = new();
@@ -188,6 +191,11 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation = jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverse * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].initRotation;
 
+        JointPoint head = jointPoints[(int)Constants.TargetPositionIndex.Face];
+        head.initRotation = jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation;
+        head.inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
+        head.inverseRotation = head.inverse * head.initRotation;
+
         return JointPoints;
     }
 
@@ -308,6 +316,14 @@ public class CalculateRotAngle : MonoBehaviour
             }
         }
 
+        if (n_flag)
+        {
+            Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].inputJointPosition - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
+            Vector3 s = sNeckJoint - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
+            Vector3 nose = s - Vector3.Project(s, v);
+            jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
+        }
+
         //Right Leg
         childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR] = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform;
         childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegR] = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].boneTransform;
@@ -340,6 +356,7 @@ public class CalculateRotAngle : MonoBehaviour
         //jointPoints[(int)Constants.TargetPositionIndex.BodyHandR].boneTransform = 
 
         //Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine], jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL], )
+
     }
 
     public void RotUpdate_s()
@@ -478,6 +495,11 @@ public class CalculateRotAngle : MonoBehaviour
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][3]) / _SCALEFACTOR);
 
+        sNeckJoint = 
+            new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][2]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][4]) / _SCALEFACTOR,
+                    float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][3]) / _SCALEFACTOR);
+
         //Left Arm
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].inputJointPosition =
             new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.left_shoulder][2]) / _SCALEFACTOR,
@@ -542,6 +564,7 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.inputJointPosition = jp.prevJointPosition[jp.prevJointPosition.Length - 1];
             }
         }
+
     }
 
     private void GetNT_s()
