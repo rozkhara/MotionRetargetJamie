@@ -21,10 +21,6 @@ public class SetCollider : MonoBehaviour
                 PopulateChildren();
             }
         }
-        if (capsules[19] != null)
-        {
-            
-        }
 
     }
 
@@ -52,7 +48,7 @@ public class SetCollider : MonoBehaviour
                     GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                     capsule.SetActive(true);
                     capsule.transform.position = Vector3.Lerp(child.transform.position, child.parent.transform.position, 0.5f);
-                    capsule.transform.rotation = Quaternion.LookRotation(Vector3.forward, child.transform.position - child.parent.transform.position);
+                    capsule.transform.rotation = Quaternion.LookRotation(child.transform.position - child.parent.transform.position);
                     float length = Vector3.Distance(child.transform.position, child.parent.transform.position);
                     capsule.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
                     //capsule.transform.parent = capsules[System.Array.IndexOf(childNodes, child.parent)];
@@ -64,6 +60,7 @@ public class SetCollider : MonoBehaviour
             }
 
         }
+        /*
         capsules[1].transform.parent = capsules[0].transform;
         capsules[2].transform.parent = capsules[1].transform;
 
@@ -88,56 +85,59 @@ public class SetCollider : MonoBehaviour
         capsules[17].transform.parent = capsules[16].transform;
         capsules[18].transform.parent = capsules[17].transform;
         capsules[19].transform.parent = capsules[18].transform;
+        */
         flag = false;
     }
 
     private void Update()
     {
+        Quaternion rot = Quaternion.AngleAxis(90, Vector3.right);
+
         capsules[0].transform.rotation = childNodes[0].rotation;
 
         capsules[1].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[1].transform.position , childNodes[0].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[1].transform.position - childNodes[0].transform.position));
+                                                    Quaternion.LookRotation(childNodes[1].transform.position - childNodes[0].transform.position) * rot);
         capsules[2].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[2].transform.position , childNodes[1].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[2].transform.position - childNodes[1].transform.position));
+                                                    Quaternion.LookRotation(childNodes[2].transform.position - childNodes[1].transform.position) * rot);
 
         capsules[3].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[6].transform.position, childNodes[2].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[6].transform.position - childNodes[2].transform.position));
+                                                    Quaternion.LookRotation(childNodes[6].transform.position - childNodes[2].transform.position) * rot);
         capsules[4].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[7].transform.position, childNodes[6].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[7].transform.position - childNodes[6].transform.position));
+                                                    Quaternion.LookRotation(childNodes[7].transform.position - childNodes[6].transform.position) * rot);
         capsules[5].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[8].transform.position, childNodes[7].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[8].transform.position - childNodes[7].transform.position));
+                                                    Quaternion.LookRotation(childNodes[8].transform.position - childNodes[7].transform.position) * rot);
         capsules[6].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[9].transform.position, childNodes[8].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[9].transform.position - childNodes[8].transform.position));
+                                                    Quaternion.LookRotation(childNodes[9].transform.position - childNodes[8].transform.position) * rot);
 
         capsules[7].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[10].transform.position, childNodes[2].transform.position, 0.5f),   
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[10].transform.position - childNodes[2].transform.position));
+                                                    Quaternion.LookRotation(childNodes[10].transform.position - childNodes[2].transform.position) * rot);
         capsules[8].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[11].transform.position, childNodes[10].transform.position, 0.5f),  
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[11].transform.position - childNodes[10].transform.position));
+                                                    Quaternion.LookRotation(childNodes[11].transform.position - childNodes[10].transform.position) * rot);
         capsules[9].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[12].transform.position, childNodes[11].transform.position, 0.5f),  
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[12].transform.position - childNodes[11].transform.position));
+                                                    Quaternion.LookRotation(childNodes[12].transform.position - childNodes[11].transform.position) * rot);
         capsules[10].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[13].transform.position, childNodes[12].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[13].transform.position - childNodes[12].transform.position));
+                                                    Quaternion.LookRotation(childNodes[13].transform.position - childNodes[12].transform.position) * rot);
 
         capsules[11].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[16].transform.position, childNodes[2].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[16].transform.position - childNodes[2].transform.position));
+                                                    Quaternion.LookRotation(childNodes[16].transform.position - childNodes[2].transform.position) * rot);
 
         capsules[12].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[20].transform.position, childNodes[0].transform.position, 0.5f),  
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[20].transform.position - childNodes[0].transform.position));
+                                                    Quaternion.LookRotation(childNodes[20].transform.position - childNodes[0].transform.position) * rot);
         capsules[13].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[21].transform.position, childNodes[20].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[21].transform.position - childNodes[20].transform.position));
+                                                    Quaternion.LookRotation(childNodes[21].transform.position - childNodes[20].transform.position) * rot);
         capsules[14].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[22].transform.position, childNodes[21].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[22].transform.position - childNodes[21].transform.position));
+                                                    Quaternion.LookRotation(childNodes[22].transform.position - childNodes[21].transform.position) * rot);
         capsules[15].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[23].transform.position, childNodes[22].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[23].transform.position - childNodes[22].transform.position));
+                                                    Quaternion.LookRotation(childNodes[23].transform.position - childNodes[22].transform.position) * rot);
 
         capsules[16].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[24].transform.position, childNodes[0].transform.position, 0.5f),  
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[24].transform.position - childNodes[0].transform.position));
+                                                    Quaternion.LookRotation(childNodes[24].transform.position - childNodes[0].transform.position) * rot);
         capsules[17].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[25].transform.position, childNodes[24].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[25].transform.position - childNodes[24].transform.position));
+                                                    Quaternion.LookRotation(childNodes[25].transform.position - childNodes[24].transform.position) * rot);
         capsules[18].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[26].transform.position, childNodes[25].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[26].transform.position - childNodes[25].transform.position));
+                                                    Quaternion.LookRotation(childNodes[26].transform.position - childNodes[25].transform.position) * rot);
         capsules[19].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[27].transform.position, childNodes[26].transform.position, 0.5f), 
-                                                    Quaternion.LookRotation(Vector3.forward, childNodes[27].transform.position - childNodes[26].transform.position));
+                                                    Quaternion.LookRotation(childNodes[27].transform.position - childNodes[26].transform.position) * rot);
 
 
 
