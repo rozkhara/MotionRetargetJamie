@@ -2152,6 +2152,28 @@ MonoBehaviour:
   - {fileID: 11187474}
   - {fileID: 768529943}
   - {fileID: 1547429439}
+  capsulesRoot: {fileID: 0}
+  capsules:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   parentTransform: {fileID: 241657228}
   s_parentTransform: {fileID: 876619070}
 --- !u!114 &1714372485
@@ -2281,6 +2303,28 @@ MonoBehaviour:
   - {fileID: 427814275}
   - {fileID: 1065122763}
   - {fileID: 521996954}
+  capsules:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  flag: 1
 --- !u!4 &1830887778
 Transform:
   m_ObjectHideFlags: 0

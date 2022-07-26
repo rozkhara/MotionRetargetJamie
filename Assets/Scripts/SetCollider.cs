@@ -7,7 +7,9 @@ public class SetCollider : MonoBehaviour
     public Transform rootNode;
     public Transform[] childNodes;
 
-    public Dictionary<int, Transform> capsules = new();
+    public GameObject[] capsules;
+
+    public bool flag = true;
 
     private void OnDrawGizmos()
     {
@@ -19,11 +21,13 @@ public class SetCollider : MonoBehaviour
                 PopulateChildren();
             }
         }
+        
     }
 
     private void Awake()
     {
         int i = 0;
+        capsules = new GameObject[20];
         //capsules = new Transform[childNodes.Length];
         foreach (Transform child in childNodes)
         {
@@ -33,8 +37,9 @@ public class SetCollider : MonoBehaviour
                 sphere.SetActive(true);
                 sphere.transform.SetPositionAndRotation(child.position, child.rotation);
                 sphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-                capsules[-1] = sphere.transform;
-
+                sphere.name = "bounding_hips";
+                capsules[i] = sphere;
+                i++;
             }
             else
             {
@@ -48,21 +53,41 @@ public class SetCollider : MonoBehaviour
                     capsule.transform.localScale = new Vector3(0.05f, length * 0.5f, 0.05f);
                     //capsule.transform.parent = capsules[System.Array.IndexOf(childNodes, child.parent)];
                     //capsule.transform.SetParent(capsules[System.Array.IndexOf(childNodes, child.parent)], true);
-                    capsules[System.Array.IndexOf(childNodes, child.parent.transform)] = capsule.transform;
+                    capsule.name = child.name;
+                    capsules[i] = capsule;
+                    i++;
                 }
             }
-            i++;
-        }
-        //foreach (var item in capsules)    //this doesnt work for some reason
-        //{
-        //    if (item.Key >= 0)
-        //    {
-        //        item.Value.SetParent(capsules[item.Key]);
 
-        //    }
-        //}
+        }
+        capsules[1].transform.parent = capsules[0].transform;
+        capsules[2].transform.parent = capsules[1].transform;
+
+        capsules[3].transform.parent = capsules[2].transform;
+        capsules[4].transform.parent = capsules[3].transform;
+        capsules[5].transform.parent = capsules[4].transform;
+        capsules[6].transform.parent = capsules[5].transform;
+
+        capsules[7].transform.parent = capsules[2].transform;
+        capsules[8].transform.parent = capsules[7].transform;
+        capsules[9].transform.parent = capsules[8].transform;
+        capsules[10].transform.parent = capsules[9].transform;
+
+        capsules[11].transform.parent = capsules[2].transform;
+
+        capsules[12].transform.parent = capsules[0].transform;
+        capsules[13].transform.parent = capsules[12].transform;
+        capsules[14].transform.parent = capsules[13].transform;
+        capsules[15].transform.parent = capsules[14].transform;
+
+        capsules[16].transform.parent = capsules[0].transform;
+        capsules[17].transform.parent = capsules[16].transform;
+        capsules[18].transform.parent = capsules[17].transform;
+        capsules[19].transform.parent = capsules[18].transform;
+        flag = false;
     }
 
+    
 
     public void PopulateChildren()
     {

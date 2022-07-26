@@ -16,6 +16,12 @@ public class CalculateRotAngle : MonoBehaviour
     public Transform s_rootNode;
     public Transform[] s_childNodes;
 
+
+    public Transform capsulesRoot;
+    public Transform[] capsules;
+    private SetCollider SetCollider;
+    
+
     private Vector3 initPosition;
     private Vector3 s_initPosition;
 
@@ -54,6 +60,7 @@ public class CalculateRotAngle : MonoBehaviour
     private void Awake()
     {
         TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
+        SetCollider = GameObject.Find("SetCollider").GetComponent<SetCollider>();
     }
 
     private void Update()
@@ -70,6 +77,10 @@ public class CalculateRotAngle : MonoBehaviour
                 Init_s();
                 t_flag = false;
             }
+        }
+        if (!SetCollider.flag)
+        {
+            capsulesRoot = GameObject.Find("bounding_hips").GetComponent<Transform>();
         }
         if (DataProcess.Instance.parseFlag)
         {
@@ -412,6 +423,11 @@ public class CalculateRotAngle : MonoBehaviour
     {
         childNodes = rootNode.GetComponentsInChildren<Transform>();
         s_childNodes = s_rootNode.GetComponentsInChildren<Transform>();
+        if(capsulesRoot != null)
+        {
+            capsules = capsulesRoot.GetComponentsInChildren<Transform>();
+
+        }
     }
 
     private void GetNT()
