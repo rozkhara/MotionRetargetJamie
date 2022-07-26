@@ -60,7 +60,7 @@ public class SetCollider : MonoBehaviour
             }
 
         }
-        /*
+
         capsules[1].transform.parent = capsules[0].transform;
         capsules[2].transform.parent = capsules[1].transform;
 
@@ -85,7 +85,16 @@ public class SetCollider : MonoBehaviour
         capsules[17].transform.parent = capsules[16].transform;
         capsules[18].transform.parent = capsules[17].transform;
         capsules[19].transform.parent = capsules[18].transform;
-        */
+
+        foreach (GameObject item in capsules)
+        {
+            if (item.transform.parent != null)
+            {
+                var inverse = new Vector3(1/item.transform.parent.localScale.x,  1/item.transform.parent.localScale.y,  1/item.transform.parent.localScale.z);
+                item.transform.localScale = Vector3.Scale(item.transform.localScale, inverse);
+            }
+        }
+
         flag = false;
     }
 
