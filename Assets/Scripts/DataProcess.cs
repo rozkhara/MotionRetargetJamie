@@ -98,6 +98,7 @@ public class DataProcess : MonoBehaviour
     private void Awake()
     {
         Application.targetFrameRate = 30;
+
         data = textA.text.ToString();
         if (null == instance)
         {
