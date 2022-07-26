@@ -2152,28 +2152,6 @@ MonoBehaviour:
   - {fileID: 11187474}
   - {fileID: 768529943}
   - {fileID: 1547429439}
-  capsulesRoot: {fileID: 0}
-  capsules:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   parentTransform: {fileID: 241657228}
   s_parentTransform: {fileID: 876619070}
 --- !u!114 &1714372485
