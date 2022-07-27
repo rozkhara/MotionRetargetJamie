@@ -47,10 +47,10 @@ public class SetCollider : MonoBehaviour
                 {
                     GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                     capsule.SetActive(true);
-                    capsule.transform.position = Vector3.Lerp(child.transform.position, child.parent.transform.position, 0.5f);
-                    capsule.transform.rotation = Quaternion.LookRotation(child.transform.position - child.parent.transform.position);
+                    capsule.transform.SetPositionAndRotation(Vector3.Lerp(child.transform.position, child.parent.transform.position, 0.5f), 
+                                                                Quaternion.LookRotation(child.transform.position - child.parent.transform.position));
                     float length = Vector3.Distance(child.transform.position, child.parent.transform.position);
-                    capsule.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
+                    capsule.transform.localScale = new Vector3(1f, length / 2.0f, 1f);
                     //capsule.transform.parent = capsules[System.Array.IndexOf(childNodes, child.parent)];
                     //capsule.transform.SetParent(capsules[System.Array.IndexOf(childNodes, child.parent)], true);
                     capsule.name = child.name;
@@ -61,38 +61,47 @@ public class SetCollider : MonoBehaviour
 
         }
 
-        capsules[1].transform.parent = capsules[0].transform;
-        capsules[2].transform.parent = capsules[1].transform;
+        bool tag = false;
+        capsules[1].transform.SetParent(capsules[0].transform, tag);
+        capsules[2].transform.SetParent(capsules[1].transform, tag);
 
-        capsules[3].transform.parent = capsules[2].transform;
-        capsules[4].transform.parent = capsules[3].transform;
-        capsules[5].transform.parent = capsules[4].transform;
-        capsules[6].transform.parent = capsules[5].transform;
+        capsules[3].transform.SetParent(capsules[2].transform, tag);
+        capsules[4].transform.SetParent(capsules[3].transform, tag);
+        capsules[5].transform.SetParent(capsules[4].transform, tag);
+        capsules[6].transform.SetParent(capsules[5].transform, tag);
 
-        capsules[7].transform.parent = capsules[2].transform;
-        capsules[8].transform.parent = capsules[7].transform;
-        capsules[9].transform.parent = capsules[8].transform;
-        capsules[10].transform.parent = capsules[9].transform;
+        capsules[7].transform.SetParent(capsules[2].transform, tag);
+        capsules[8].transform.SetParent(capsules[7].transform, tag);
+        capsules[9].transform.SetParent(capsules[8].transform, tag);
+        capsules[10].transform.SetParent(capsules[9].transform, tag);
 
-        capsules[11].transform.parent = capsules[2].transform;
+        capsules[11].transform.SetParent(capsules[2].transform, tag);
 
-        capsules[12].transform.parent = capsules[0].transform;
-        capsules[13].transform.parent = capsules[12].transform;
-        capsules[14].transform.parent = capsules[13].transform;
-        capsules[15].transform.parent = capsules[14].transform;
+        capsules[12].transform.SetParent(capsules[0].transform, tag);
+        capsules[13].transform.SetParent(capsules[12].transform, tag);
+        capsules[14].transform.SetParent(capsules[13].transform, tag);
+        capsules[15].transform.SetParent(capsules[14].transform, tag);
 
-        capsules[16].transform.parent = capsules[0].transform;
-        capsules[17].transform.parent = capsules[16].transform;
-        capsules[18].transform.parent = capsules[17].transform;
-        capsules[19].transform.parent = capsules[18].transform;
+        capsules[16].transform.SetParent(capsules[0].transform, tag);
+        capsules[17].transform.SetParent(capsules[16].transform, tag);
+        capsules[18].transform.SetParent(capsules[17].transform, tag);
+        capsules[19].transform.SetParent(capsules[18].transform, tag);
 
+        bool[] scaleSet = new bool[capsules.Length];
+        int j = 0;
         foreach (GameObject item in capsules)
         {
             if (item.transform.parent != null)
             {
-                var inverse = new Vector3(1/item.transform.parent.localScale.x,  1/item.transform.parent.localScale.y,  1/item.transform.parent.localScale.z);
-                item.transform.localScale = Vector3.Scale(item.transform.localScale, inverse);
+                scaleSet[j] = false;
+                if (scaleSet[System.Array.IndexOf(capsules, item.transform.parent.gameObject)] != true)
+                {
+                    var inverse = new Vector3(1 / item.transform.parent.localScale.x, 1 / item.transform.parent.localScale.y, 1 / item.transform.parent.localScale.z);
+                    item.transform.localScale = Vector3.Scale(item.transform.localScale, inverse);
+                    scaleSet[j] = true;
+                }
             }
+            j++;
         }
 
         flag = false;
