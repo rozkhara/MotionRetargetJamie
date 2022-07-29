@@ -97,7 +97,7 @@ public class SetCollider : MonoBehaviour
                 if (scaleSet[System.Array.IndexOf(capsules, item.transform.parent.gameObject)] != true)
                 {
                     var inverse = new Vector3(1 / item.transform.parent.localScale.x, 1 / item.transform.parent.localScale.y, 1 / item.transform.parent.localScale.z);
-                    item.transform.localScale = Vector3.Scale(item.transform.localScale, inverse);
+                    item.transform.localScale = Vector3.Scale(inverse,item.transform.localScale);
                     scaleSet[j] = true;
                 }
             }
