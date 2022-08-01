@@ -30,8 +30,8 @@ public class SetCollider : MonoBehaviour
     {
         materials = gameObject.GetComponent<MeshRenderer>().materials;
         int i = 0;
-        capsules = new GameObject[20];
-        //capsules = new Transform[childNodes.Length;
+        float length;
+        capsules = new GameObject[22];
         foreach (Transform child in childNodes)
         {
             if (child == rootNode)
@@ -55,10 +55,8 @@ public class SetCollider : MonoBehaviour
                     capsule.SetActive(true);
                     capsule.transform.SetPositionAndRotation(Vector3.Lerp(child.transform.position, child.parent.transform.position, 0.5f),
                                                                 Quaternion.LookRotation(child.transform.position - child.parent.transform.position));
-                    float length = Vector3.Distance(child.transform.position, child.parent.transform.position);
+                    length = Vector3.Distance(child.transform.position, child.parent.transform.position);
                     capsule.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
-                    //capsule.transform.parent = capsules[System.Array.IndexOf(childNodes, child.parent)];
-                    //capsule.transform.SetParent(capsules[System.Array.IndexOf(childNodes, child.parent)], true);
                     capsule.name = child.name + " - " + child.parent.name;
                     capsule.AddComponent<Rigidbody>();
                     capsule.AddComponent<ColliderCollision>();
@@ -69,6 +67,34 @@ public class SetCollider : MonoBehaviour
             }
 
         }
+#region create body
+        GameObject capsule1 = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        capsule1.SetActive(true);
+        capsule1.transform.SetPositionAndRotation(Vector3.Lerp(childNodes[6].transform.position, childNodes[20].transform.position, 0.5f),
+                                                    Quaternion.LookRotation(childNodes[6].transform.position - childNodes[20].transform.position));
+        length = Vector3.Distance(childNodes[6].transform.position, childNodes[20].transform.position);
+        capsule1.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
+        capsule1.name = childNodes[6].name + " - " + childNodes[20].name;
+        capsule1.AddComponent<Rigidbody>();
+        capsule1.AddComponent<ColliderCollision>();
+        capsule1.GetComponent<Collider>().isTrigger = true;
+        capsules[i] = capsule1;
+        i++;
+
+        GameObject capsule2 = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        capsule2.SetActive(true);
+        capsule2.transform.SetPositionAndRotation(Vector3.Lerp(childNodes[10].transform.position, childNodes[24].transform.position, 0.5f),
+                                                    Quaternion.LookRotation(childNodes[10].transform.position - childNodes[24].transform.position));
+        length = Vector3.Distance(childNodes[10].transform.position, childNodes[24].transform.position);
+        capsule2.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
+        capsule2.name = childNodes[10].name + " - " + childNodes[24].name;
+        capsule2.AddComponent<Rigidbody>();
+        capsule2.AddComponent<ColliderCollision>();
+        capsule2.GetComponent<Collider>().isTrigger = true;
+        capsules[i] = capsule2;
+        i++;
+
+#endregion
 
         GameObject parentObject = new();
         parentObject.transform.position = childNodes[0].transform.parent.position;
@@ -132,6 +158,11 @@ public class SetCollider : MonoBehaviour
                                                     Quaternion.LookRotation(childNodes[26].transform.position - childNodes[25].transform.position) * rot);
         capsules[19].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[27].transform.position, childNodes[26].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[27].transform.position - childNodes[26].transform.position) * rot);
+
+        capsules[20].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[6].transform.position, childNodes[20].transform.position, 0.5f),
+                                                    Quaternion.LookRotation(childNodes[6].transform.position - childNodes[20].transform.position) * rot);
+        capsules[21].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[10].transform.position, childNodes[24].transform.position, 0.5f),
+                                                    Quaternion.LookRotation(childNodes[10].transform.position - childNodes[24].transform.position) * rot);
     }
 
     public void PopulateChildren()
