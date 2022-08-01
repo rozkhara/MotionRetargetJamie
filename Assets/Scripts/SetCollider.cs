@@ -9,7 +9,7 @@ public class SetCollider : MonoBehaviour
 
     public GameObject[] capsules;
 
-    private readonly float headPosition = 0.3f;
+    private readonly float headPosition = 0.31f;
     private readonly float headSize = 0.4f;
 
     private Material[] materials = new Material[2];
