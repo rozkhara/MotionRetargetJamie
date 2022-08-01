@@ -1711,6 +1711,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  headPosition: 0.5
+  headSize: 0.4
   flag: 1
 --- !u!4 &1830887778
 Transform:
