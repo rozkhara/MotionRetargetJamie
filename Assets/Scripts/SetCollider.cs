@@ -12,8 +12,6 @@ public class SetCollider : MonoBehaviour
     private readonly float headPosition = 0.31f;
     private readonly float headSize = 0.4f;
 
-    private Material[] materials = new Material[2];
-
     public bool flag = true;
 
     private void OnDrawGizmos()
@@ -31,7 +29,6 @@ public class SetCollider : MonoBehaviour
 
     private void Awake()
     {
-        materials = gameObject.GetComponent<MeshRenderer>().materials;
         int i = 0;
         float length;
         capsules = new GameObject[23];
