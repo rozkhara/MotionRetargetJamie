@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OMR : MonoBehaviour
 {
-    Matrix Jacobian;
+    LegacyMatrix Jacobian;
     private int EndEffectorCount = 5;
 
     public Transform Root;
@@ -13,11 +13,11 @@ public class OMR : MonoBehaviour
 
     public Vector3[] PreEndEffector; // 이전 프레임의 EndEffector 좌표
     //public Vector3[] dx1;
-    public Matrix dx1; // EndEffector 좌표의 변화량
+    public LegacyMatrix dx1; // EndEffector 좌표의 변화량
     public Vector3[] ee1; // error1의 예측값
     public Vector3[] dsrc; // source Joints 회전의 변화량
     //public Vector3[] dedes;
-    public Matrix dedes; // destination Joints 회전의 변화량의 예측값
+    public LegacyMatrix dedes; // destination Joints 회전의 변화량의 예측값
 
     private void Start()
     {
@@ -30,16 +30,16 @@ public class OMR : MonoBehaviour
         EndEffector[3] = Joints[13];
         EndEffector[4] = Joints[16];
 
-        Jacobian = new Matrix(EndEffectorCount * 3, Constants.JOINTCOUNT * 3);
+        Jacobian = new LegacyMatrix(EndEffectorCount * 3, Constants.JOINTCOUNT * 3);
 
         PreEndEffector = new Vector3[EndEffectorCount];
         //dx1 = new Vector3[EndEffectorCount];
-        dx1 = new Matrix(EndEffectorCount * 3, 1);
+        dx1 = new LegacyMatrix(EndEffectorCount * 3, 1);
         ee1 = new Vector3[EndEffectorCount];
 
         dsrc = new Vector3[Constants.JOINTCOUNT];
         //dedes = new Vector3[Constants.JOINTCOUNT];
-        dedes = new Matrix(Constants.JOINTCOUNT * 3, 1);
+        dedes = new LegacyMatrix(Constants.JOINTCOUNT * 3, 1);
     }
 
     private void Update()
@@ -86,10 +86,10 @@ public class OMR : MonoBehaviour
         }
     }
 
-    public Matrix JacobianPseudoInverse(Matrix input)
+    public LegacyMatrix JacobianPseudoInverse(LegacyMatrix input)
     {
-        Matrix Temp = Jacobian * Jacobian.T;
-        Matrix JPI = Jacobian.T * Temp.Inverse();
+        LegacyMatrix Temp = Jacobian * Jacobian.T;
+        LegacyMatrix JPI = Jacobian.T * Temp.Inverse();
 
         return JPI;
     }

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 // Modified from https://msdn.microsoft.com/en-us/magazine/mt736457.aspx
-public class Matrix
+public class LegacyMatrix
 {
     public float[][] mat;
     public int rows
@@ -14,12 +14,12 @@ public class Matrix
         get { return mat[0].Length; }
     }
 
-    public Matrix(int rows, int cols)
+    public LegacyMatrix(int rows, int cols)
     {
         mat = MatrixCreate(rows, cols);
     }
 
-    public Matrix(float[][] values)
+    public LegacyMatrix(float[][] values)
     {
         mat = new float[values.GetLength(0)][];
         for (int i = 0; i < values.GetLength(0); i++)
@@ -32,9 +32,9 @@ public class Matrix
     }
 
 
-    public Matrix(Matrix4x4 m)
+    public LegacyMatrix(Matrix4x4 m)
     {
-        Matrix res = new Matrix(new float[] {
+        LegacyMatrix res = new LegacyMatrix(new float[] {
             m.m00, m.m01, m.m02, m.m03,
             m.m10, m.m11, m.m12, m.m13,
             m.m20, m.m21, m.m22, m.m23,
@@ -43,7 +43,7 @@ public class Matrix
 
         mat = res.mat;
     }
-    public Matrix(Transform transform, bool useLocalValues)
+    public LegacyMatrix(Transform transform, bool useLocalValues)
     {
         /*
         Matrix4x4 m = transform.localToWorldMatrix;
@@ -59,17 +59,17 @@ public class Matrix
 
         if (useLocalValues)
         {
-            Matrix rot = new Matrix(Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale));
+            LegacyMatrix rot = new LegacyMatrix(Matrix4x4.TRS(transform.localPosition, transform.localRotation, transform.localScale));
             mat = rot.mat;
         }
         else
         {
-            Matrix rot = new Matrix(Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale));
+            LegacyMatrix rot = new LegacyMatrix(Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale));
             mat = rot.mat;
         }
     }
 
-    public Matrix T
+    public LegacyMatrix T
     {
         get
         {
@@ -79,30 +79,30 @@ public class Matrix
             for (int i = 0; i < cols; ++i)
                 for (int j = 0; j < rows; ++j)
                     resValues[pos++] = mat[j][i];
-            return new Matrix(resValues, cols, rows);
+            return new LegacyMatrix(resValues, cols, rows);
         }
     }
 
-    public Matrix(Vector4 vec)
+    public LegacyMatrix(Vector4 vec)
     {
-        Matrix res = new Matrix(new float[] { vec.x, vec.y, vec.z, vec.w }, 4, 1);
+        LegacyMatrix res = new LegacyMatrix(new float[] { vec.x, vec.y, vec.z, vec.w }, 4, 1);
         mat = res.mat;
     }
 
-    public Matrix(Vector3 vec)
+    public LegacyMatrix(Vector3 vec)
     {
-        Matrix res = new Matrix(new float[] { vec.x, vec.y, vec.z }, 3, 1);
+        LegacyMatrix res = new LegacyMatrix(new float[] { vec.x, vec.y, vec.z }, 3, 1);
         mat = res.mat;
     }
 
-    public Matrix(Vector2 vec)
+    public LegacyMatrix(Vector2 vec)
     {
-        Matrix res = new Matrix(new float[] { vec.x, vec.y }, 2, 1);
+        LegacyMatrix res = new LegacyMatrix(new float[] { vec.x, vec.y }, 2, 1);
         mat = res.mat;
     }
 
     // Fro http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
-    public Matrix(Quaternion quat)
+    public LegacyMatrix(Quaternion quat)
     {
         mat = MatrixCreate(3, 3);
 
@@ -127,7 +127,7 @@ public class Matrix
         mat[2][2] = 1 - 2 * x * x - 2 * y * y;
     }
 
-    public Matrix(float[] values, int rows, int cols)
+    public LegacyMatrix(float[] values, int rows, int cols)
     {
         if (rows * cols != values.Length)
         {
@@ -147,7 +147,7 @@ public class Matrix
         }
     }
 
-    public Matrix(double[] values, int rows, int cols)
+    public LegacyMatrix(double[] values, int rows, int cols)
     {
         if (rows * cols != values.Length)
         {
@@ -271,71 +271,71 @@ public class Matrix
         set { mat[i][j] = value; }
     }
 
-    public static Matrix operator *(Matrix m, float s)
+    public static LegacyMatrix operator *(LegacyMatrix m, float s)
     {
-        Matrix res = new Matrix(m.rows, m.cols);
+        LegacyMatrix res = new LegacyMatrix(m.rows, m.cols);
         for (int i = 0; i < m.rows; ++i)
             for (int j = 0; j < m.cols; ++j)
                 res[i, j] = m[i, j] * s;
         return res;
     }
 
-    public static Matrix operator *(float s, Matrix m)
+    public static LegacyMatrix operator *(float s, LegacyMatrix m)
     {
         return m * s;
     }
 
-    public static Matrix operator +(Matrix m, float s)
+    public static LegacyMatrix operator +(LegacyMatrix m, float s)
     {
-        Matrix res = new Matrix(m.rows, m.cols);
+        LegacyMatrix res = new LegacyMatrix(m.rows, m.cols);
         for (int i = 0; i < m.rows; ++i)
             for (int j = 0; j < m.cols; ++j)
                 res[i, j] = m[i, j] + s;
         return res;
     }
 
-    public static Matrix operator +(float s, Matrix m)
+    public static LegacyMatrix operator +(float s, LegacyMatrix m)
     {
         return m + s;
     }
 
-    public static Matrix operator -(Matrix m, float s)
+    public static LegacyMatrix operator -(LegacyMatrix m, float s)
     {
         return m + (-s);
     }
 
-    public static Matrix operator -(float s, Matrix m)
+    public static LegacyMatrix operator -(float s, LegacyMatrix m)
     {
         return (-m) + s;
     }
 
 
-    public static Matrix operator *(Matrix c1, Matrix c2)
+    public static LegacyMatrix operator *(LegacyMatrix c1, LegacyMatrix c2)
     {
-        return new Matrix(MatrixProduct(c1.mat, c2.mat));
+        return new LegacyMatrix(MatrixProduct(c1.mat, c2.mat));
     }
 
-    public static Matrix operator *(Matrix c1, Vector3 c2)
+    public static LegacyMatrix operator *(LegacyMatrix c1, Vector3 c2)
     {
-        return new Matrix(MatrixProduct(c1.mat, (new Matrix(c2)).mat));
+        return new LegacyMatrix(MatrixProduct(c1.mat, (new LegacyMatrix(c2)).mat));
     }
-    public static Matrix operator *(Vector3 c1, Matrix c2)
+    public static LegacyMatrix operator *(Vector3 c1, LegacyMatrix c2)
     {
-        return new Matrix(MatrixProduct((new Matrix(c1)).T.mat, c2.mat));
-    }
-
-    public static Matrix operator *(Matrix c1, Vector4 c2)
-    {
-        return new Matrix(MatrixProduct(c1.mat, (new Matrix(c2)).mat));
-    }
-    public static Matrix operator *(Vector4 c1, Matrix c2)
-    {
-        return new Matrix(MatrixProduct((new Matrix(c1)).T.mat, c2.mat));
+        return new LegacyMatrix(MatrixProduct((new LegacyMatrix(c1)).T.mat, c2.mat));
     }
 
-    public static Matrix operator -(Matrix m)
+    public static LegacyMatrix operator *(LegacyMatrix c1, Vector4 c2)
     {
-        Matrix res = new Matrix(m.rows, m.cols);
+        return new LegacyMatrix(MatrixProduct(c1.mat, (new LegacyMatrix(c2)).mat));
+    }
+    public static LegacyMatrix operator *(Vector4 c1, LegacyMatrix c2)
+    {
+        return new LegacyMatrix(MatrixProduct((new LegacyMatrix(c1)).T.mat, c2.mat));
+    }
+
+    public static LegacyMatrix operator -(LegacyMatrix m)
+    {
+        LegacyMatrix res = new LegacyMatrix(m.rows, m.cols);
 
         for (int i = 0; i < m.rows; ++i)
             for (int j = 0; j < m.cols; ++j)
@@ -343,27 +343,27 @@ public class Matrix
         return res;
     }
 
-    public static Matrix operator +(Matrix c1, Matrix c2)
+    public static LegacyMatrix operator +(LegacyMatrix c1, LegacyMatrix c2)
     {
         if (c1.rows != c2.rows || c1.cols != c2.cols)
         {
             throw new ArgumentException("Left hand side size: (" + c1.rows + ", " + c1.cols + ") != Right hand side size: (" + c2.rows + ", " + c2.cols + ")");
         }
-        Matrix res = new Matrix(c1.rows, c1.cols);
+        LegacyMatrix res = new LegacyMatrix(c1.rows, c1.cols);
         for (int i = 0; i < c1.rows; ++i)
             for (int j = 0; j < c1.cols; ++j)
                 res[i, j] = c1[i, j] + c2[i, j];
         return res;
     }
 
-    public static Matrix operator -(Matrix c1, Matrix c2)
+    public static LegacyMatrix operator -(LegacyMatrix c1, LegacyMatrix c2)
     {
         return c1 + (-c2);
     }
 
-    public Matrix Inverse()
+    public LegacyMatrix Inverse()
     {
-        return new Matrix(MatrixInverse(mat));
+        return new LegacyMatrix(MatrixInverse(mat));
     }
 
 
