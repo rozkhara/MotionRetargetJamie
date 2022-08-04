@@ -43,12 +43,12 @@ public class OMR : MonoBehaviour
     }
 
     private void Update()
-    {        
-        for(int i = 0; i < EndEffectorCount; i++)
+    {
+        for (int i = 0; i < EndEffectorCount; i++)
         {
-            dx1[3*i, 0] = EndEffector[i].position.x - PreEndEffector[i].x;
-            dx1[3*i+1, 0] = EndEffector[i].position.y - PreEndEffector[i].y;
-            dx1[3*i+2, 0] = EndEffector[i].position.z - PreEndEffector[i].z;
+            dx1[3 * i, 0] = EndEffector[i].position.x - PreEndEffector[i].x;
+            dx1[3 * i + 1, 0] = EndEffector[i].position.y - PreEndEffector[i].y;
+            dx1[3 * i + 2, 0] = EndEffector[i].position.z - PreEndEffector[i].z;
             PreEndEffector[i] = EndEffector[i].position;
         }
 
@@ -64,7 +64,7 @@ public class OMR : MonoBehaviour
     }
 
     public void JacobianMatrix()
-    {   
+    {
         for (int i = 0; i < EndEffectorCount; i++)
         {
             for (int j = 0; j < Constants.JOINTCOUNT; j++)
