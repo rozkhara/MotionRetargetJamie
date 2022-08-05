@@ -43,7 +43,7 @@ public class SetCollider : MonoBehaviour
                 sphere.name = child.name;
                 sphere.AddComponent<Rigidbody>();
                 sphere.AddComponent<ColliderCollision>();
-                sphere.GetComponent<Collider>().isTrigger = true;
+                sphere.GetComponent<Rigidbody>().isKinematic = true;
                 capsules[i] = sphere;
                 i++;
             }
@@ -60,7 +60,7 @@ public class SetCollider : MonoBehaviour
                     capsule.name = child.name + " - " + child.parent.name;
                     capsule.AddComponent<Rigidbody>();
                     capsule.AddComponent<ColliderCollision>();
-                    capsule.GetComponent<Collider>().isTrigger = true;
+                    capsule.GetComponent<Rigidbody>().isKinematic = true;
                     capsules[i] = capsule;
                     i++;
                 }
@@ -77,7 +77,7 @@ public class SetCollider : MonoBehaviour
         capsule1.name = childNodes[6].name + " - " + childNodes[20].name;
         capsule1.AddComponent<Rigidbody>();
         capsule1.AddComponent<ColliderCollision>();
-        capsule1.GetComponent<Collider>().isTrigger = true;
+        capsule1.GetComponent<Rigidbody>().isKinematic = true;
         capsules[i] = capsule1;
         i++;
 
@@ -90,7 +90,7 @@ public class SetCollider : MonoBehaviour
         capsule2.name = childNodes[10].name + " - " + childNodes[24].name;
         capsule2.AddComponent<Rigidbody>();
         capsule2.AddComponent<ColliderCollision>();
-        capsule2.GetComponent<Collider>().isTrigger = true;
+        capsule2.GetComponent<Rigidbody>().isKinematic = true;
         capsules[i] = capsule2;
         i++;
 
@@ -101,9 +101,8 @@ public class SetCollider : MonoBehaviour
         sphere1.name = childNodes[16].name;
         sphere1.AddComponent<Rigidbody>();
         sphere1.AddComponent<ColliderCollision>();
-        sphere1.GetComponent<Collider>().isTrigger = true;
+        sphere1.GetComponent<Rigidbody>().isKinematic = true;
         capsules[i] = sphere1;
-        i++;
         #endregion
 
         GameObject parentObject = new();

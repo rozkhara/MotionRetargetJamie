@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 public class HondaImplementation : MonoBehaviour
 {
@@ -33,18 +33,32 @@ public class HondaImplementation : MonoBehaviour
         }
     }
 
-    private Vector3 AngleToPositionFunction(Matrix<Vector3> Theta)
+    private Vector3 AngleToPositionFunction(Matrix<Quaternion> Theta)
     {
-        Quaternion Q = Quaternion.LookRotation(Theta[1, 0], Vector3.forward);
-        double s = Q.w;
-        double x = Q.x;
-        double y = Q.y;
-        double z = Q.z;
-        Matrix<double> R = DenseMatrix.OfArray(new double[,] {
-            {1 - 2*y*y - 2*z*z, 2*x*y - 2*s*z, 2*x*z + 2*s*y, 0},
-            {2*x*y + 2*s*z, 1 - 2*x*x - 2*z*z, 2*y*z - 2*s*x, 0},
-            {2*x*z - 2*s*y, 2*y*z + 2*s*x, 1 - 2*x*x - 2*y*y, 0},
-            {0, 0, 0, 1}});
+        for (int i = 0; i < Theta.RowCount; i++)
+        {
+            for (int j = 0; j < Theta.ColumnCount; j++)
+            {
+                float s = Theta[i, j].w;
+                float x = Theta[i, j].x;
+                float y = Theta[i, j].y;
+                float z = Theta[i, j].z;
+                Matrix<float> R = Matrix.Build.Dense(4, 4);
+                R[0, 0] = 1 - 2 * y * y - 2 * z * z;
+                R[0, 1] = 2 * x * y - 2 * s * z;
+                R[0, 2] = 2 * x * z + 2 * s * y;
+
+                R[1, 0] = 2 * x * y + 2 * s * z;
+                R[1, 1] = 1 - 2 * x * x - 2 * z * z;
+                R[1, 2] = 2 * y * z - 2 * s * x;
+
+                R[2, 0] = 2 * x * z - 2 * s * y;
+                R[2, 1] = 2 * y * z + 2 * s * x;
+                R[2, 2] = 1 - 2 * x * x - 2 * y * y;
+
+                R[3, 3] = 1;
+            }
+        }
 
         return Vector3.zero;
     }
