@@ -8,13 +8,18 @@ public class SetCollider : MonoBehaviour
     public Transform[] childNodes;
 
     public GameObject[] capsules;
+    public GameObject[] virtualCapsules;
 
     private readonly float headPosition = 0.31f;
     private readonly float headSize = 0.4f;
+    private readonly Vector3 virtualScaleCapsule = new Vector3(1.5f, 1.3f, 1.5f);
+    private readonly Vector3 virtualScaleSphere = new Vector3(1.3f, 1.3f, 1.3f);
 
     public bool flag = true;
-    private readonly bool isKinematic = false;
-    private readonly bool isTrigger = true;
+    private readonly bool isKinematic = true;
+    private readonly bool isTrigger = false;
+    public bool isRenderBody = false;
+    public bool isRenderVirtual = false;
 
     private void OnDrawGizmos()
     {
@@ -34,6 +39,7 @@ public class SetCollider : MonoBehaviour
         int i = 0;
         float length;
         capsules = new GameObject[23];
+        virtualCapsules = new GameObject[23];
         foreach (Transform child in childNodes)
         {
             if (child == rootNode)
@@ -44,10 +50,16 @@ public class SetCollider : MonoBehaviour
                 sphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
                 sphere.name = child.name;
                 sphere.AddComponent<Rigidbody>();
-                sphere.AddComponent<ColliderCollision>();
                 sphere.GetComponent<Rigidbody>().isKinematic = isKinematic;
                 sphere.GetComponent<Collider>().isTrigger = isTrigger;
+                sphere.GetComponent<MeshRenderer>().enabled = isRenderBody;
+                GameObject sphereVirtual = Instantiate(sphere);
+                sphere.AddComponent<ColliderCollision>();
                 capsules[i] = sphere;
+                sphereVirtual.transform.localScale = Vector3.Scale(sphere.transform.localScale, virtualScaleSphere);
+                sphereVirtual.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
+                sphereVirtual.name = "Virtual " + child.name;
+                virtualCapsules[i] = sphereVirtual;
                 i++;
             }
             else
@@ -62,10 +74,16 @@ public class SetCollider : MonoBehaviour
                     capsule.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
                     capsule.name = child.name + " - " + child.parent.name;
                     capsule.AddComponent<Rigidbody>();
-                    capsule.AddComponent<ColliderCollision>();
                     capsule.GetComponent<Rigidbody>().isKinematic = isKinematic;
                     capsule.GetComponent<Collider>().isTrigger = isTrigger;
+                    capsule.GetComponent<MeshRenderer>().enabled = isRenderBody;
+                    GameObject capsuleVirtual = Instantiate(capsule);
+                    capsule.AddComponent<ColliderCollision>();
                     capsules[i] = capsule;
+                    capsuleVirtual.transform.localScale = Vector3.Scale(capsule.transform.localScale, virtualScaleCapsule);
+                    capsuleVirtual.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
+                    capsuleVirtual.name = "Virtual " + child.name + " - " + child.parent.name;
+                    virtualCapsules[i] = capsuleVirtual;
                     i++;
                 }
             }
@@ -80,10 +98,16 @@ public class SetCollider : MonoBehaviour
         capsule1.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
         capsule1.name = childNodes[6].name + " - " + childNodes[20].name;
         capsule1.AddComponent<Rigidbody>();
-        capsule1.AddComponent<ColliderCollision>();
         capsule1.GetComponent<Rigidbody>().isKinematic = isKinematic;
         capsule1.GetComponent<Collider>().isTrigger = isTrigger;
+        capsule1.GetComponent<MeshRenderer>().enabled = isRenderBody;
+        GameObject capsuleVirtual1 = Instantiate(capsule1);
+        capsule1.AddComponent<ColliderCollision>();
         capsules[i] = capsule1;
+        capsuleVirtual1.transform.localScale = Vector3.Scale(capsule1.transform.localScale, virtualScaleCapsule);
+        capsuleVirtual1.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
+        capsuleVirtual1.name = "Virtual " + childNodes[6].name + " - " + childNodes[20].name;
+        virtualCapsules[i] = capsuleVirtual1;
         i++;
 
         GameObject capsule2 = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -94,10 +118,16 @@ public class SetCollider : MonoBehaviour
         capsule2.transform.localScale = new Vector3(0.05f, length / 2.0f, 0.05f);
         capsule2.name = childNodes[10].name + " - " + childNodes[24].name;
         capsule2.AddComponent<Rigidbody>();
-        capsule2.AddComponent<ColliderCollision>();
         capsule2.GetComponent<Rigidbody>().isKinematic = isKinematic;
         capsule2.GetComponent<Collider>().isTrigger = isTrigger;
+        capsule2.GetComponent<MeshRenderer>().enabled = isRenderBody;
+        GameObject capsuleVirtual2 = Instantiate(capsule2);
+        capsule2.AddComponent<ColliderCollision>();
         capsules[i] = capsule2;
+        capsuleVirtual2.transform.localScale = Vector3.Scale(capsule2.transform.localScale, virtualScaleCapsule);
+        capsuleVirtual2.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
+        capsuleVirtual2.name = "Virtual " + childNodes[10].name + " - " + childNodes[24].name;
+        virtualCapsules[i] = capsuleVirtual2;
         i++;
 
         GameObject sphere1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -106,19 +136,34 @@ public class SetCollider : MonoBehaviour
         sphere1.transform.localScale = new Vector3(headSize, headSize, headSize);
         sphere1.name = childNodes[16].name;
         sphere1.AddComponent<Rigidbody>();
-        sphere1.AddComponent<ColliderCollision>();
         sphere1.GetComponent<Rigidbody>().isKinematic = isKinematic;
         sphere1.GetComponent<Collider>().isTrigger = isTrigger;
+        sphere1.GetComponent<MeshRenderer>().enabled = isRenderBody;
+        GameObject sphereVirtual1 = Instantiate(sphere1);
+        sphere1.AddComponent<ColliderCollision>();
         capsules[i] = sphere1;
+        sphereVirtual1.transform.localScale = Vector3.Scale(sphere1.transform.localScale, virtualScaleSphere);
+        sphereVirtual1.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
+        sphereVirtual1.name = "Virtual " + childNodes[16].name;
+        virtualCapsules[i] = sphereVirtual1;
         #endregion
 
         GameObject parentObject = new();
         parentObject.transform.position = childNodes[0].transform.parent.position;
         parentObject.name = "Bounding Volume";
 
+        GameObject vParentObject = new();
+        vParentObject.transform.position = childNodes[0].transform.parent.position;
+        vParentObject.name = "Virtual Bounding Volume";
+
         foreach (var item in capsules)
         {
             item.transform.SetParent(parentObject.transform);
+        }
+        foreach (var item in virtualCapsules)
+        {
+            item.transform.SetParent(vParentObject.transform);
+            item.GetComponent<MeshRenderer>().material = this.gameObject.GetComponent<MeshRenderer>().materials[2];
         }
 
 
@@ -129,8 +174,7 @@ public class SetCollider : MonoBehaviour
     {
         Quaternion rot = Quaternion.AngleAxis(90, Vector3.right);
 
-        capsules[0].transform.SetPositionAndRotation(childNodes[0].position, childNodes[0].rotation);
-
+        capsules[0].transform.SetPositionAndRotation(childNodes[0].position, childNodes[0].rotation * rot);
         capsules[1].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[1].transform.position, childNodes[0].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[1].transform.position - childNodes[0].transform.position) * rot);
         capsules[2].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[2].transform.position, childNodes[1].transform.position, 0.5f),
@@ -180,6 +224,11 @@ public class SetCollider : MonoBehaviour
         capsules[21].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[10].transform.position, childNodes[24].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[10].transform.position - childNodes[24].transform.position) * rot);
         capsules[22].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[16].position, childNodes[19].position, headPosition), childNodes[16].rotation);
+
+        for (int i = 0; i < virtualCapsules.Length; i++)
+        {
+            virtualCapsules[i].transform.SetPositionAndRotation(capsules[i].transform.position, capsules[i].transform.rotation);
+        }
     }
 
     public void PopulateChildren()

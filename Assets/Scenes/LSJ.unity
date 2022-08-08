@@ -1437,28 +1437,11 @@ MonoBehaviour:
   - {fileID: 427814275}
   - {fileID: 1065122763}
   - {fileID: 521996954}
-  capsules:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  capsules: []
+  virtualCapsules: []
   flag: 1
+  isRenderBody: 1
+  isRenderVirtual: 1
 --- !u!4 &1830887778
 Transform:
   m_ObjectHideFlags: 0
@@ -1496,6 +1479,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 2100000, guid: 478785c84d9c2ce4abebf460049a2021, type: 2}
+  - {fileID: 2100000, guid: d2d03c619bcae5e44b9310be80ed5158, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
