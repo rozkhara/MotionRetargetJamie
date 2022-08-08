@@ -13,6 +13,8 @@ public class SetCollider : MonoBehaviour
     private readonly float headSize = 0.4f;
 
     public bool flag = true;
+    private readonly bool isKinematic = false;
+    private readonly bool isTrigger = true;
 
     private void OnDrawGizmos()
     {
@@ -43,7 +45,8 @@ public class SetCollider : MonoBehaviour
                 sphere.name = child.name;
                 sphere.AddComponent<Rigidbody>();
                 sphere.AddComponent<ColliderCollision>();
-                sphere.GetComponent<Rigidbody>().isKinematic = true;
+                sphere.GetComponent<Rigidbody>().isKinematic = isKinematic;
+                sphere.GetComponent<Collider>().isTrigger = isTrigger;
                 capsules[i] = sphere;
                 i++;
             }
@@ -60,7 +63,8 @@ public class SetCollider : MonoBehaviour
                     capsule.name = child.name + " - " + child.parent.name;
                     capsule.AddComponent<Rigidbody>();
                     capsule.AddComponent<ColliderCollision>();
-                    capsule.GetComponent<Rigidbody>().isKinematic = true;
+                    capsule.GetComponent<Rigidbody>().isKinematic = isKinematic;
+                    capsule.GetComponent<Collider>().isTrigger = isTrigger;
                     capsules[i] = capsule;
                     i++;
                 }
@@ -77,7 +81,8 @@ public class SetCollider : MonoBehaviour
         capsule1.name = childNodes[6].name + " - " + childNodes[20].name;
         capsule1.AddComponent<Rigidbody>();
         capsule1.AddComponent<ColliderCollision>();
-        capsule1.GetComponent<Rigidbody>().isKinematic = true;
+        capsule1.GetComponent<Rigidbody>().isKinematic = isKinematic;
+        capsule1.GetComponent<Collider>().isTrigger = isTrigger;
         capsules[i] = capsule1;
         i++;
 
@@ -90,7 +95,8 @@ public class SetCollider : MonoBehaviour
         capsule2.name = childNodes[10].name + " - " + childNodes[24].name;
         capsule2.AddComponent<Rigidbody>();
         capsule2.AddComponent<ColliderCollision>();
-        capsule2.GetComponent<Rigidbody>().isKinematic = true;
+        capsule2.GetComponent<Rigidbody>().isKinematic = isKinematic;
+        capsule2.GetComponent<Collider>().isTrigger = isTrigger;
         capsules[i] = capsule2;
         i++;
 
@@ -101,7 +107,8 @@ public class SetCollider : MonoBehaviour
         sphere1.name = childNodes[16].name;
         sphere1.AddComponent<Rigidbody>();
         sphere1.AddComponent<ColliderCollision>();
-        sphere1.GetComponent<Rigidbody>().isKinematic = true;
+        sphere1.GetComponent<Rigidbody>().isKinematic = isKinematic;
+        sphere1.GetComponent<Collider>().isTrigger = isTrigger;
         capsules[i] = sphere1;
         #endregion
 
