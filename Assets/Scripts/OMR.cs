@@ -64,9 +64,9 @@ public class OMR : MonoBehaviour
         }
 
         JacobianMatrix();
-        Debug.Log(JacobianP.ToString());
+        //Debug.Log(JacobianP.ToString());
         //JacobianPseudoInverse(JacobianP);
-        Debug.Log(JacobianPseudoInverse(JacobianP).ToString());
+        //Debug.Log(JacobianPseudoInverse(JacobianP).ToString());
     }
 
     public void JacobianMatrix()

@@ -540,7 +540,7 @@ public class LegacyMatrix
         for (int i = 0; i < matrix.Length; ++i)
         {
             for (int j = 0; j < matrix[i].Length; ++j)
-                s += matrix[i][j].ToString("F3").PadLeft(8) + " ";
+                s += matrix[i][j].ToString("F2").PadLeft(8) + "\t";
             s += Environment.NewLine;
         }
         return s;
