@@ -15,6 +15,7 @@ public class SetCollider : MonoBehaviour
         public GameObject go;
         public Transform parentTransform = null;
         public Transform childTransform = null;
+        public Transform prevParentTransform = null;
     }
 
     private readonly float headPosition = 0.31f;
@@ -185,6 +186,7 @@ public class SetCollider : MonoBehaviour
         {
             item.go.transform.SetParent(vParentObject.transform);
             item.go.GetComponent<MeshRenderer>().material = this.gameObject.GetComponent<MeshRenderer>().materials[2];
+            item.prevParentTransform = item.parentTransform;
         }
 
 
@@ -195,6 +197,10 @@ public class SetCollider : MonoBehaviour
     {
         Quaternion rot = Quaternion.AngleAxis(90, Vector3.right);
 
+        foreach(var item in virtualCapsules)
+        {
+            item.prevParentTransform = item.parentTransform;
+        }
         capsules[0].transform.SetPositionAndRotation(childNodes[0].position, childNodes[0].rotation * rot);
         virtualCapsules[0].parentTransform = childNodes[0].transform;
         virtualCapsules[0].childTransform = childNodes[0].transform;
