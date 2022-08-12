@@ -10,14 +10,22 @@ public class ColliderCollision : MonoBehaviour
     private string parent;
     private Vector3 colPoint;
     private GameObject tempObject;
-    private List<Collision> go = new();
+    private List<Collision> CollisionList = new();
+    private List<GameObject> GoList = new();
 
-    private Vector3 curParentPos = new();
-    private Quaternion curParentRotation = new();
+    private Vector3 curParentPosition = new();
+    private Vector3 curChildPosition = new();
     private Vector3 prevParentPosition = new();
     private Quaternion prevParentRotation = new();
+    private Vector3 prevChildPosition = new();
+    private Quaternion prevChildRotation = new();
     private Vector3 PoL = new();
     private float length = new();
+
+    [SerializeField]
+    private GameObject RealParentObject;
+    [SerializeField]
+    private Transform[] RealObjects;
 
     private void Awake()
     {
@@ -33,32 +41,43 @@ public class ColliderCollision : MonoBehaviour
             self = gameObject.name;
             parent = "Placeholder";
         }
+
+    }
+    private void Start()
+    {
+        if (RealParentObject == null)
+        {
+            RealParentObject = GameObject.Find("Bounding Volume");
+            RealObjects = RealParentObject.GetComponentsInChildren<Transform>();
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (!collision.gameObject.name.Contains(self) && !collision.gameObject.name.Contains(parent) && collision.gameObject.name.Contains("Virtual"))       //if two colliders do not share a joint
         {
-            if (!go.Contains(collision))
+            if (!CollisionList.Contains(collision))
             {
-                go.Add(collision);
+                CollisionList.Add(collision);
             }
             gameObject.GetComponent<MeshRenderer>().material = SetCollider.GetComponent<MeshRenderer>().materials[1];
             collision.gameObject.GetComponent<MeshRenderer>().material = SetCollider.GetComponent<MeshRenderer>().materials[3];
             Debug.Log(string.Format("{0} collides with {1} at ({2}, {3}, {4})", gameObject.name, collision.gameObject.name, collision.GetContact(0).point.x, collision.GetContact(0).point.y, collision.GetContact(0).point.z));
             colPoint = collision.GetContact(0).point;
-            StartCoroutine(CustomGizmo());
+            //StartCoroutine(CustomGizmo());
             //Debug.DrawRay(collision.GetContact(0).point, collision.GetContact(0).normal, Color.red);
-            tempObject.name = string.Format("{0} - {1}", gameObject.name, collision.gameObject.name);
-            Debug.Log(gameObject.name + " collides with " + collision.gameObject.name);
-            FindDistance(collision.gameObject, colPoint, out curParentPos, out curParentRotation, out prevParentRotation, out prevParentPosition, out PoL, out length);
-            GameObject realVolume = GameObject.Find(collision.gameObject.name.TrimStart("Virtual ".ToCharArray()));
+            //tempObject.name = string.Format("{0} - {1}", gameObject.name, collision.gameObject.name);
+            //Debug.Log(gameObject.name + " collides with " + collision.gameObject.name);
+            GetValues(collision.gameObject, colPoint);
+            GameObject realVolume = RealObjects[collision.gameObject.transform.GetSiblingIndex() + 1].gameObject;
+            //Debug.Log("ColGameObject = " + collision.gameObject.name + " realVolume = " + realVolume.name);
             Vector3 pointA = GetPointA(realVolume, colPoint);
-            Vector3 prevPointA = GetPrevPointA(pointA, curParentPos, prevParentPosition, curParentRotation, prevParentRotation);
-            Debug.Log("curPos: " + curParentPos.ToString() + " prevPos: " + prevParentPosition.ToString());
-            Debug.DrawLine(pointA, prevPointA, Color.blue);
-            //Debug.DrawLine(ParentPos, PoL, Color.green);
-            //Debug.DrawLine(PoL, colPoint, Color.green);
+            Vector3 prevPointA = GetPrevPointA(pointA);
+            //Debug.Log("curPos: " + curParentPosition.ToString() + " prevPos: " + prevParentPosition.ToString());
+            Debug.DrawLine(pointA, curParentPosition, Color.blue);
+            Debug.DrawLine(prevPointA, prevParentPosition, Color.blue);
+            Debug.DrawLine(curParentPosition, PoL, Color.green);
+            Debug.DrawLine(PoL, colPoint, Color.green);
             Debug.Break();
         }
     }
@@ -69,16 +88,21 @@ public class ColliderCollision : MonoBehaviour
         //{
         //    Debug.DrawRay(collision.GetContact(0).point, collision.GetContact(0).normal, Color.red);
         //}
-        foreach (var item in go)
+        foreach (var item in CollisionList)
         {
             if (item.gameObject == collision.gameObject)
             {
                 if (!collision.gameObject.name.Contains(self) && !collision.gameObject.name.Contains(parent) && collision.gameObject.name.Contains("Virtual"))       //if two colliders do not share a joint
                 {
                     var tempV = collision.GetContact(0).point;
-                    tempObject.transform.position = tempV;
-                    FindDistance(collision.gameObject, tempV, out curParentPos, out curParentRotation, out prevParentRotation, out prevParentPosition, out PoL, out length);
-                    Debug.DrawLine(curParentPos, PoL, Color.green);
+                    //tempObject.transform.position = tempV;
+                    GetValues(collision.gameObject, tempV);
+                    GameObject realVolume = RealObjects[collision.gameObject.transform.GetSiblingIndex() + 1].gameObject;
+                    Vector3 pointA = GetPointA(realVolume, tempV);
+                    Vector3 prevPointA = GetPrevPointA(pointA);
+                    Debug.DrawLine(pointA, curParentPosition, Color.blue);
+                    Debug.DrawLine(prevPointA, prevParentPosition, Color.blue);
+                    Debug.DrawLine(curParentPosition, PoL, Color.green);
                     Debug.DrawLine(PoL, tempV, Color.green);
                 }
             }
@@ -89,11 +113,11 @@ public class ColliderCollision : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (go.Contains(collision))
+        if (CollisionList.Contains(collision))
         {
-            go.Remove(collision);
+            CollisionList.Remove(collision);
         }
-        Destroy(tempObject);
+        //Destroy(tempObject);
         gameObject.GetComponent<MeshRenderer>().material = SetCollider.GetComponent<MeshRenderer>().materials[0];
         collision.gameObject.GetComponent<MeshRenderer>().material = SetCollider.GetComponent<MeshRenderer>().materials[2];
     }
@@ -123,53 +147,38 @@ public class ColliderCollision : MonoBehaviour
     //    gameObject.GetComponent<MeshRenderer>().material = SetCollider.GetComponent<MeshRenderer>().materials[0];
     //}
 
-    private IEnumerator CustomGizmo()
-    {
-        if (tempObject != null)
-        {
-            Destroy(tempObject);
-        }
-        tempObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        tempObject.SetActive(true);
-        tempObject.transform.position = colPoint;
-        tempObject.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-        tempObject.GetComponent<Collider>().enabled = false;
-        //tempObject.AddComponent<ColliderCollision>();
-        yield return null;
-    }
+    //private IEnumerator CustomGizmo()
+    //{
+    //    if (tempObject != null)
+    //    {
+    //        Destroy(tempObject);
+    //    }
+    //    tempObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    //    tempObject.SetActive(true);
+    //    tempObject.transform.position = colPoint;
+    //    tempObject.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
+    //    tempObject.GetComponent<Collider>().enabled = false;
+    //    //tempObject.AddComponent<ColliderCollision>();
+    //    yield return null;
+    //}
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="go">The virtualCapsule object</param>
-    /// <param name="pointA">Collision Point</param>
-    /// <param name="pos1">Parent Joint Position</param>
-    /// <param name="pos2">Child Joint Position</param>
-    /// <param name="pointOnLine">Point on line pos1->pos2 which makes the distance between line and pointA minimum</param>
-    /// <param name="length">Bone Length</param>
-    private void FindDistance(GameObject go, Vector3 pointA, out Vector3 pos1, out Quaternion curRot, out Quaternion prevRot, out Vector3 prevPos, out Vector3 pointOnLine, out float length)
+    private void GetValues(GameObject go, Vector3 pointA)
     {
-        foreach (var item in SetCollider.virtualCapsules)
+        foreach (var item in SetCollider.virtualCapsules)   //can replace this with sibling index
         {
             if (item.go == go)
             {
-                pos1 = item.parentTransform.position;
-                Vector3 pos2 = item.childTransform.position;
-                curRot = item.parentTransform.rotation;
-                prevRot = item.prevParentTransform.rotation;
-                prevPos = item.prevParentTransform.position;
-                Vector3 line = pos2 - pos1;
-                length = Vector3.Distance(pos1, pos2);
-                pointOnLine = GetClosestPoint(pos1, pos2, pointA);
+                curParentPosition = item.curParentPosition;
+                curChildPosition = item.curChildPosition;
+                prevParentPosition = item.prevParentPosition;
+                prevParentRotation = item.prevParentRotation;
+                prevChildPosition = item.prevChildPosition;
+                prevChildRotation = item.prevChildRotation;
+                length = Vector3.Distance(curParentPosition, curChildPosition);
+                PoL = GetClosestPoint(curParentPosition, curChildPosition, pointA);
                 return;
             }
         }
-        pos1 = Vector3.zero;
-        curRot = Quaternion.identity;
-        prevRot = Quaternion.identity;
-        prevPos = Vector3.zero;
-        pointOnLine = Vector3.zero;
-        length = 0.0f;
         Debug.Log("Object Not Found");
     }
 
@@ -185,11 +194,6 @@ public class ColliderCollision : MonoBehaviour
         return (A + line * d);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="PoL">Point on Line</param>
-    /// <param name="PoS">Point on Surface of virtual volume</param>
     private Vector3 GetPointA(GameObject realVolume, Vector3 PoS)
     {
         if (realVolume.name.Contains("Face") || realVolume.name.Contains("Hips"))
@@ -204,12 +208,14 @@ public class ColliderCollision : MonoBehaviour
         }
     }
 
-    private Vector3 GetPrevPointA(Vector3 pointA, Vector3 curPos, Vector3 prevPos, Quaternion curRot, Quaternion prevRot)
+    private Vector3 GetPrevPointA(Vector3 pointA)
     {
-        Vector3 inverseTranspose = prevPos - curPos;
-        Quaternion inverseRotation = Quaternion.RotateTowards(curRot, prevRot, 180f);
+        Vector3 prevBone = prevChildPosition - prevParentPosition;
+        Vector3 curBone = curChildPosition - curParentPosition;
+        Vector3 inverseTranspose = prevParentPosition - curParentPosition;
+        Quaternion inverseRotation = Quaternion.FromToRotation(curBone, prevBone);
         Vector3 returnVal = pointA + inverseTranspose;
-        returnVal = inverseRotation * (returnVal - prevPos) + prevPos;
+        returnVal = inverseRotation * (returnVal - prevParentPosition) + prevParentPosition;
         return returnVal;
     }
 }

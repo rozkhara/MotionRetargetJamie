@@ -10,12 +10,17 @@ public class SetCollider : MonoBehaviour
     public GameObject[] capsules;
     public VirtualFamily[] virtualCapsules;
 
-    public class VirtualFamily
+    public struct VirtualFamily
     {
         public GameObject go;
-        public Transform parentTransform = null;
-        public Transform childTransform = null;
-        public Transform prevParentTransform = null;
+        public Vector3 curParentPosition;
+        public Quaternion curParentRotation;
+        public Vector3 curChildPosition;
+        public Quaternion curChildRotation;
+        public Vector3 prevParentPosition;
+        public Quaternion prevParentRotation;
+        public Vector3 prevChildPosition;
+        public Quaternion prevChildRotation;
     }
 
     private readonly float headPosition = 0.31f;
@@ -72,8 +77,10 @@ public class SetCollider : MonoBehaviour
                 sphereVirtual.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
                 sphereVirtual.name = "Virtual " + child.name;
                 virtualCapsules[i].go = sphereVirtual;
-                virtualCapsules[i].parentTransform = child.transform;
-                virtualCapsules[i].childTransform = child.transform;
+                virtualCapsules[i].curParentPosition = child.transform.position;
+                virtualCapsules[i].curParentRotation = child.transform.rotation;
+                virtualCapsules[i].curChildPosition = child.transform.position;
+                virtualCapsules[i].curChildRotation = child.transform.rotation;
                 i++;
             }
             else
@@ -98,8 +105,10 @@ public class SetCollider : MonoBehaviour
                     capsuleVirtual.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
                     capsuleVirtual.name = "Virtual " + child.name + " - " + child.parent.name;
                     virtualCapsules[i].go = capsuleVirtual;
-                    virtualCapsules[i].parentTransform = child.parent.transform;
-                    virtualCapsules[i].childTransform = child.transform;
+                    virtualCapsules[i].curParentPosition = child.parent.transform.position;
+                    virtualCapsules[i].curParentRotation = child.parent.transform.rotation;
+                    virtualCapsules[i].curChildPosition = child.transform.position;
+                    virtualCapsules[i].curChildRotation = child.transform.rotation;
                     i++;
                 }
             }
@@ -124,8 +133,11 @@ public class SetCollider : MonoBehaviour
         capsuleVirtual1.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
         capsuleVirtual1.name = "Virtual " + childNodes[6].name + " - " + childNodes[20].name;
         virtualCapsules[i].go = capsuleVirtual1;
-        virtualCapsules[i].parentTransform = childNodes[20].transform;
-        virtualCapsules[i].childTransform = childNodes[6].transform;
+        virtualCapsules[i].curParentPosition = childNodes[20].transform.position;
+        virtualCapsules[i].curParentRotation = childNodes[20].transform.rotation;
+        virtualCapsules[i].curChildPosition = childNodes[6].transform.position;
+        virtualCapsules[i].curChildRotation = childNodes[6].transform.rotation;
+
         i++;
 
         GameObject capsule2 = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -146,8 +158,10 @@ public class SetCollider : MonoBehaviour
         capsuleVirtual2.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
         capsuleVirtual2.name = "Virtual " + childNodes[10].name + " - " + childNodes[24].name;
         virtualCapsules[i].go = capsuleVirtual2;
-        virtualCapsules[i].parentTransform = childNodes[24].transform;
-        virtualCapsules[i].childTransform = childNodes[10].transform;
+        virtualCapsules[i].curParentPosition = childNodes[24].transform.position;
+        virtualCapsules[i].curParentRotation = childNodes[24].transform.rotation;
+        virtualCapsules[i].curChildPosition = childNodes[10].transform.position;
+        virtualCapsules[i].curChildRotation = childNodes[10].transform.rotation;
         i++;
 
         GameObject sphere1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -166,8 +180,10 @@ public class SetCollider : MonoBehaviour
         sphereVirtual1.GetComponent<MeshRenderer>().enabled = isRenderVirtual;
         sphereVirtual1.name = "Virtual " + childNodes[16].name;
         virtualCapsules[i].go = sphereVirtual1;
-        virtualCapsules[i].parentTransform = childNodes[16].transform;
-        virtualCapsules[i].childTransform = childNodes[16].transform;
+        virtualCapsules[i].curParentPosition = childNodes[16].transform.position;
+        virtualCapsules[i].curParentRotation = childNodes[16].transform.rotation;
+        virtualCapsules[i].curChildPosition = childNodes[16].transform.position;
+        virtualCapsules[i].curChildRotation = childNodes[16].transform.rotation;
         #endregion
 
         GameObject parentObject = new();
@@ -182,11 +198,14 @@ public class SetCollider : MonoBehaviour
         {
             item.transform.SetParent(parentObject.transform);
         }
-        foreach (var item in virtualCapsules)
+        for (int k = 0; k < virtualCapsules.Length; k++)
         {
-            item.go.transform.SetParent(vParentObject.transform);
-            item.go.GetComponent<MeshRenderer>().material = this.gameObject.GetComponent<MeshRenderer>().materials[2];
-            item.prevParentTransform = item.parentTransform;
+            virtualCapsules[k].go.transform.SetParent(vParentObject.transform);
+            virtualCapsules[k].go.GetComponent<MeshRenderer>().material = this.gameObject.GetComponent<MeshRenderer>().materials[2];
+            virtualCapsules[k].prevParentPosition = virtualCapsules[k].curParentPosition;
+            virtualCapsules[k].prevParentRotation = virtualCapsules[k].curParentRotation;
+            virtualCapsules[k].prevChildPosition = virtualCapsules[k].curChildPosition;
+            virtualCapsules[k].prevChildRotation = virtualCapsules[k].curChildRotation;
         }
 
 
@@ -197,106 +216,155 @@ public class SetCollider : MonoBehaviour
     {
         Quaternion rot = Quaternion.AngleAxis(90, Vector3.right);
 
-        foreach(var item in virtualCapsules)
+        for (int k = 0; k < virtualCapsules.Length; k++)
         {
-            item.prevParentTransform = item.parentTransform;
+            virtualCapsules[k].prevParentPosition = virtualCapsules[k].curParentPosition;
+            virtualCapsules[k].prevParentRotation = virtualCapsules[k].curParentRotation;
+            virtualCapsules[k].prevChildPosition = virtualCapsules[k].curChildPosition;
+            virtualCapsules[k].prevChildRotation = virtualCapsules[k].curChildRotation;
         }
         capsules[0].transform.SetPositionAndRotation(childNodes[0].position, childNodes[0].rotation * rot);
-        virtualCapsules[0].parentTransform = childNodes[0].transform;
-        virtualCapsules[0].childTransform = childNodes[0].transform;
+        virtualCapsules[0].curParentPosition = childNodes[0].transform.position;
+        virtualCapsules[0].curParentRotation = childNodes[0].transform.rotation;
+        virtualCapsules[0].curChildPosition = childNodes[0].transform.position;
+        virtualCapsules[0].curChildRotation = childNodes[0].transform.rotation;
         capsules[1].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[1].transform.position, childNodes[0].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[1].transform.position - childNodes[0].transform.position) * rot);
-        virtualCapsules[1].parentTransform = childNodes[0].transform;
-        virtualCapsules[1].childTransform = childNodes[1].transform;
+        virtualCapsules[1].curParentPosition = childNodes[0].transform.position;
+        virtualCapsules[1].curParentRotation = childNodes[0].transform.rotation;
+        virtualCapsules[1].curChildPosition = childNodes[1].transform.position;
+        virtualCapsules[1].curChildRotation = childNodes[1].transform.rotation;
         capsules[2].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[2].transform.position, childNodes[1].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[2].transform.position - childNodes[1].transform.position) * rot);
-        virtualCapsules[2].parentTransform = childNodes[1].transform;
-        virtualCapsules[2].childTransform = childNodes[2].transform;
+        virtualCapsules[2].curParentPosition = childNodes[1].transform.position;
+        virtualCapsules[2].curParentRotation = childNodes[1].transform.rotation;
+        virtualCapsules[2].curChildPosition = childNodes[2].transform.position;
+        virtualCapsules[2].curChildRotation = childNodes[2].transform.rotation;
 
         capsules[3].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[6].transform.position, childNodes[2].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[6].transform.position - childNodes[2].transform.position) * rot);
-        virtualCapsules[3].parentTransform = childNodes[2].transform;
-        virtualCapsules[3].childTransform = childNodes[6].transform;
+        virtualCapsules[3].curParentPosition = childNodes[2].transform.position;
+        virtualCapsules[3].curParentRotation = childNodes[2].transform.rotation;
+        virtualCapsules[3].curChildPosition = childNodes[6].transform.position;
+        virtualCapsules[3].curChildRotation = childNodes[6].transform.rotation;
         capsules[4].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[7].transform.position, childNodes[6].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[7].transform.position - childNodes[6].transform.position) * rot);
-        virtualCapsules[4].parentTransform = childNodes[6].transform;
-        virtualCapsules[4].childTransform = childNodes[7].transform;
+        virtualCapsules[4].curParentPosition = childNodes[6].transform.position;
+        virtualCapsules[4].curParentRotation = childNodes[6].transform.rotation;
+        virtualCapsules[4].curChildPosition = childNodes[7].transform.position;
+        virtualCapsules[4].curChildRotation = childNodes[7].transform.rotation;
         capsules[5].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[8].transform.position, childNodes[7].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[8].transform.position - childNodes[7].transform.position) * rot);
-        virtualCapsules[5].parentTransform = childNodes[7].transform;
-        virtualCapsules[5].childTransform = childNodes[8].transform;
+        virtualCapsules[5].curParentPosition = childNodes[7].transform.position;
+        virtualCapsules[5].curParentRotation = childNodes[7].transform.rotation;
+        virtualCapsules[5].curChildPosition = childNodes[8].transform.position;
+        virtualCapsules[5].curChildRotation = childNodes[8].transform.rotation;
         capsules[6].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[9].transform.position, childNodes[8].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[9].transform.position - childNodes[8].transform.position) * rot);
-        virtualCapsules[6].parentTransform = childNodes[8].transform;
-        virtualCapsules[6].childTransform = childNodes[9].transform;
+        virtualCapsules[6].curParentPosition = childNodes[8].transform.position;
+        virtualCapsules[6].curParentRotation = childNodes[8].transform.rotation;
+        virtualCapsules[6].curChildPosition = childNodes[9].transform.position;
+        virtualCapsules[6].curChildRotation = childNodes[9].transform.rotation;
 
         capsules[7].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[10].transform.position, childNodes[2].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[10].transform.position - childNodes[2].transform.position) * rot);
-        virtualCapsules[7].parentTransform = childNodes[2].transform;
-        virtualCapsules[7].childTransform = childNodes[10].transform;
+        virtualCapsules[7].curParentPosition = childNodes[2].transform.position;
+        virtualCapsules[7].curParentRotation = childNodes[2].transform.rotation;
+        virtualCapsules[7].curChildPosition = childNodes[10].transform.position;
+        virtualCapsules[7].curChildRotation = childNodes[10].transform.rotation;
         capsules[8].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[11].transform.position, childNodes[10].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[11].transform.position - childNodes[10].transform.position) * rot);
-        virtualCapsules[8].parentTransform = childNodes[10].transform;
-        virtualCapsules[8].childTransform = childNodes[11].transform;
+        virtualCapsules[8].curParentPosition = childNodes[10].transform.position;
+        virtualCapsules[8].curParentRotation = childNodes[10].transform.rotation;
+        virtualCapsules[8].curChildPosition = childNodes[11].transform.position;
+        virtualCapsules[8].curChildRotation = childNodes[11].transform.rotation;
         capsules[9].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[12].transform.position, childNodes[11].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[12].transform.position - childNodes[11].transform.position) * rot);
-        virtualCapsules[9].parentTransform = childNodes[11].transform;
-        virtualCapsules[9].childTransform = childNodes[12].transform;
+        virtualCapsules[9].curParentPosition = childNodes[11].transform.position;
+        virtualCapsules[9].curParentRotation = childNodes[11].transform.rotation;
+        virtualCapsules[9].curChildPosition = childNodes[12].transform.position;
+        virtualCapsules[9].curChildRotation = childNodes[12].transform.rotation;
         capsules[10].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[13].transform.position, childNodes[12].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[13].transform.position - childNodes[12].transform.position) * rot);
-        virtualCapsules[10].parentTransform = childNodes[12].transform;
-        virtualCapsules[10].childTransform = childNodes[13].transform;
+        virtualCapsules[10].curParentPosition = childNodes[12].transform.position;
+        virtualCapsules[10].curParentRotation = childNodes[12].transform.rotation;
+        virtualCapsules[10].curChildPosition = childNodes[13].transform.position;
+        virtualCapsules[10].curChildRotation = childNodes[13].transform.rotation;
 
         capsules[11].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[16].transform.position, childNodes[2].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[16].transform.position - childNodes[2].transform.position) * rot);
-        virtualCapsules[11].parentTransform = childNodes[2].transform;
-        virtualCapsules[11].childTransform = childNodes[16].transform;
+        virtualCapsules[11].curParentPosition = childNodes[2].transform.position;
+        virtualCapsules[11].curParentRotation = childNodes[2].transform.rotation;
+        virtualCapsules[11].curChildPosition = childNodes[16].transform.position;
+        virtualCapsules[11].curChildRotation = childNodes[16].transform.rotation;
 
         capsules[12].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[20].transform.position, childNodes[0].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[20].transform.position - childNodes[0].transform.position) * rot);
-        virtualCapsules[12].parentTransform = childNodes[0].transform;
-        virtualCapsules[12].childTransform = childNodes[20].transform;
+        virtualCapsules[12].curParentPosition = childNodes[0].transform.position;
+        virtualCapsules[12].curParentRotation = childNodes[0].transform.rotation;
+        virtualCapsules[12].curChildPosition = childNodes[20].transform.position;
+        virtualCapsules[12].curChildRotation = childNodes[20].transform.rotation;
         capsules[13].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[21].transform.position, childNodes[20].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[21].transform.position - childNodes[20].transform.position) * rot);
-        virtualCapsules[13].parentTransform = childNodes[20].transform;
-        virtualCapsules[13].childTransform = childNodes[21].transform;
+        virtualCapsules[13].curParentPosition = childNodes[20].transform.position;
+        virtualCapsules[13].curParentRotation = childNodes[20].transform.rotation;
+        virtualCapsules[13].curChildPosition = childNodes[21].transform.position;
+        virtualCapsules[13].curChildRotation = childNodes[21].transform.rotation;
         capsules[14].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[22].transform.position, childNodes[21].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[22].transform.position - childNodes[21].transform.position) * rot);
-        virtualCapsules[14].parentTransform = childNodes[21].transform;
-        virtualCapsules[14].childTransform = childNodes[22].transform;
+        virtualCapsules[14].curParentPosition = childNodes[21].transform.position;
+        virtualCapsules[14].curParentRotation = childNodes[21].transform.rotation;
+        virtualCapsules[14].curChildPosition = childNodes[22].transform.position;
+        virtualCapsules[14].curChildRotation = childNodes[22].transform.rotation;
         capsules[15].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[23].transform.position, childNodes[22].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[23].transform.position - childNodes[22].transform.position) * rot);
-        virtualCapsules[15].parentTransform = childNodes[22].transform;
-        virtualCapsules[15].childTransform = childNodes[23].transform;
+        virtualCapsules[15].curParentPosition = childNodes[22].transform.position;
+        virtualCapsules[15].curParentRotation = childNodes[22].transform.rotation;
+        virtualCapsules[15].curChildPosition = childNodes[23].transform.position;
+        virtualCapsules[15].curChildRotation = childNodes[23].transform.rotation;
 
         capsules[16].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[24].transform.position, childNodes[0].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[24].transform.position - childNodes[0].transform.position) * rot);
-        virtualCapsules[16].parentTransform = childNodes[0].transform;
-        virtualCapsules[16].childTransform = childNodes[24].transform;
+        virtualCapsules[16].curParentPosition = childNodes[0].transform.position;
+        virtualCapsules[16].curParentRotation = childNodes[0].transform.rotation;
+        virtualCapsules[16].curChildPosition = childNodes[24].transform.position;
+        virtualCapsules[16].curChildRotation = childNodes[24].transform.rotation;
         capsules[17].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[25].transform.position, childNodes[24].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[25].transform.position - childNodes[24].transform.position) * rot);
-        virtualCapsules[17].parentTransform = childNodes[24].transform;
-        virtualCapsules[17].childTransform = childNodes[25].transform;
+        virtualCapsules[17].curParentPosition = childNodes[24].transform.position;
+        virtualCapsules[17].curParentRotation = childNodes[24].transform.rotation;
+        virtualCapsules[17].curChildPosition = childNodes[25].transform.position;
+        virtualCapsules[17].curChildRotation = childNodes[25].transform.rotation;
         capsules[18].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[26].transform.position, childNodes[25].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[26].transform.position - childNodes[25].transform.position) * rot);
-        virtualCapsules[18].parentTransform = childNodes[25].transform;
-        virtualCapsules[18].childTransform = childNodes[26].transform;
+        virtualCapsules[18].curParentPosition = childNodes[25].transform.position;
+        virtualCapsules[18].curParentRotation = childNodes[25].transform.rotation;
+        virtualCapsules[18].curChildPosition = childNodes[26].transform.position;
+        virtualCapsules[18].curChildRotation = childNodes[26].transform.rotation;
         capsules[19].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[27].transform.position, childNodes[26].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[27].transform.position - childNodes[26].transform.position) * rot);
-        virtualCapsules[19].parentTransform = childNodes[26].transform;
-        virtualCapsules[19].childTransform = childNodes[27].transform;
+        virtualCapsules[19].curParentPosition = childNodes[26].transform.position;
+        virtualCapsules[19].curParentRotation = childNodes[26].transform.rotation;
+        virtualCapsules[19].curChildPosition = childNodes[27].transform.position;
+        virtualCapsules[19].curChildRotation = childNodes[27].transform.rotation;
 
         capsules[20].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[6].transform.position, childNodes[20].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[6].transform.position - childNodes[20].transform.position) * rot);
-        virtualCapsules[20].parentTransform = childNodes[20].transform;
-        virtualCapsules[20].childTransform = childNodes[6].transform;
+        virtualCapsules[20].curParentPosition = childNodes[20].transform.position;
+        virtualCapsules[20].curParentRotation = childNodes[20].transform.rotation;
+        virtualCapsules[20].curChildPosition = childNodes[6].transform.position;
+        virtualCapsules[20].curChildRotation = childNodes[6].transform.rotation;
         capsules[21].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[10].transform.position, childNodes[24].transform.position, 0.5f),
                                                     Quaternion.LookRotation(childNodes[10].transform.position - childNodes[24].transform.position) * rot);
-        virtualCapsules[21].parentTransform = childNodes[24].transform;
-        virtualCapsules[21].childTransform = childNodes[10].transform;
+        virtualCapsules[21].curParentPosition = childNodes[24].transform.position;
+        virtualCapsules[21].curParentRotation = childNodes[24].transform.rotation;
+        virtualCapsules[21].curChildPosition = childNodes[10].transform.position;
+        virtualCapsules[21].curChildRotation = childNodes[10].transform.rotation;
         capsules[22].transform.SetPositionAndRotation(Vector3.Lerp(childNodes[16].position, childNodes[19].position, headPosition), childNodes[16].rotation);
-        virtualCapsules[22].parentTransform = childNodes[16].transform;
-        virtualCapsules[22].childTransform = childNodes[16].transform;
+        virtualCapsules[22].curParentPosition = childNodes[16].transform.position;
+        virtualCapsules[22].curParentRotation = childNodes[16].transform.rotation;
+        virtualCapsules[22].curChildPosition = childNodes[16].transform.position;
+        virtualCapsules[22].curChildRotation = childNodes[16].transform.rotation;
 
         for (int i = 0; i < virtualCapsules.Length; i++)
         {
