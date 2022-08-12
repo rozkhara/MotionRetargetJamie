@@ -22,7 +22,7 @@ public class CollisionAvoidance : MonoBehaviour
         JacobianA = new LegacyMatrix(3, JointCount * 3);
         initLocalRot = new Quaternion[JointCount];
         initRot = new Quaternion[JointCount];
-        for (int i=0; i<JointCount; i++)
+        for (int i = 0; i < JointCount; i++)
         {
             initLocalRot[i] = Joints[i].localRotation;
             initRot[i] = Joints[i].rotation;
@@ -32,7 +32,7 @@ public class CollisionAvoidance : MonoBehaviour
 
         int count = 4;
         testPoints = new GameObject[count];
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
@@ -58,7 +58,7 @@ public class CollisionAvoidance : MonoBehaviour
         var method = type.GetMethod("Clear");
         method.Invoke(new object(), null);
 
-        
+
         calcTpos(testPoints[0].transform, Joints[11], Joints[12]);
         calcTpos(testPoints[1].transform, Joints[7], Joints[8]);
         calcTpos(testPoints[2].transform, Joints[25], Joints[26]);
@@ -81,9 +81,9 @@ public class CollisionAvoidance : MonoBehaviour
                     index = i;
                     deltaLocalRot = temp.localRotation * Quaternion.Inverse(initLocalRot[index]);
 
-                    pa.position = Quaternion.Inverse(temp.parent.rotation) * (pa.position - temp.position) + temp.position; 
-                    pa.position = Quaternion.Inverse(deltaLocalRot) * (pa.position - temp.position) + temp.position; 
-                    pa.position = temp.parent.rotation * (pa.position - temp.position) + temp.position; 
+                    pa.position = Quaternion.Inverse(temp.parent.rotation) * (pa.position - temp.position) + temp.position;
+                    pa.position = Quaternion.Inverse(deltaLocalRot) * (pa.position - temp.position) + temp.position;
+                    pa.position = temp.parent.rotation * (pa.position - temp.position) + temp.position;
 
                     temp = temp.parent;
                     break;

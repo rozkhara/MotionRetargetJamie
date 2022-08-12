@@ -22,9 +22,7 @@ public class ColliderCollision : MonoBehaviour
     private Vector3 PoL = new();
     private float length = new();
 
-    [SerializeField]
     private GameObject RealParentObject;
-    [SerializeField]
     private Transform[] RealObjects;
 
     private void Awake()

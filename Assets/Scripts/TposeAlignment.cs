@@ -139,7 +139,7 @@ public class TposeAlignment : MonoBehaviour
             SourceBones[(int)SourceBoneIndex.lUpperArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL].position
                                                                                         - t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmR].position);
             SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL].position);
-            SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].position);  
+            SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].position);
             //target과 source skeleton의 위상이 다르므로, 양 UpperArm은 서로의 좌표를 이용해 구함
         }
         else

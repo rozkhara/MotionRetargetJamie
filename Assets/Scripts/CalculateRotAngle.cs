@@ -309,7 +309,7 @@ public class CalculateRotAngle : MonoBehaviour
                 {
                     Vector3 fv = jp.parent.inputJointPosition - jp.inputJointPosition;
                     jp.boneTransform.rotation = Quaternion.LookRotation(jp.inputJointPosition - jp.child.inputJointPosition, fv) * jp.inverseRotation;
-                }                
+                }
             }
             else if (jp.child != null)
             {
@@ -496,7 +496,7 @@ public class CalculateRotAngle : MonoBehaviour
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.center_head][3]) / _SCALEFACTOR);
 
-        sNeckJoint = 
+        sNeckJoint =
             new Vector3(float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][2]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][4]) / _SCALEFACTOR,
                     float.Parse(sData[DataProcess.Instance.chunkIndex + (int)Constants.SourcePositionIndex.neck_base][3]) / _SCALEFACTOR);
@@ -560,7 +560,7 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.prevJointPosition[0] = jp.inputJointPosition;
                 for (var i = 1; i < jp.prevJointPosition.Length; i++)
                 {
-                    jp.prevJointPosition[i] = jp.prevJointPosition[i] * LowPassParam + jp.prevJointPosition[i - 1] * (1f - LowPassParam); 
+                    jp.prevJointPosition[i] = jp.prevJointPosition[i] * LowPassParam + jp.prevJointPosition[i - 1] * (1f - LowPassParam);
                 }
                 jp.inputJointPosition = jp.prevJointPosition[jp.prevJointPosition.Length - 1];
             }

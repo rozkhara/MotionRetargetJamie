@@ -6,8 +6,8 @@ public class OMR : MonoBehaviour
 {
     LegacyMatrix JacobianP;
     //LegacyMatrix JacobianO;
-    private int EndEffectorCount = 5;
-    private int JointCount = 28;
+    private readonly int EndEffectorCount = 5;
+    private readonly int JointCount = 28;
     public int Kfactor = 150;
 
     public Transform Root; //targetRot¿« Cha_Hips
@@ -47,15 +47,15 @@ public class OMR : MonoBehaviour
     }
 
     private void Update()
-    {        
-        for(int i = 0; i < EndEffectorCount; i++)
+    {
+        for (int i = 0; i < EndEffectorCount; i++)
         {
-            deltaP[3*i, 0] = EndEffector[i].position.x - PreEndEffector[i].x;
-            deltaP[3*i+1, 0] = EndEffector[i].position.y - PreEndEffector[i].y;
-            deltaP[3*i+2, 0] = EndEffector[i].position.z - PreEndEffector[i].z;
+            deltaP[3 * i, 0] = EndEffector[i].position.x - PreEndEffector[i].x;
+            deltaP[3 * i + 1, 0] = EndEffector[i].position.y - PreEndEffector[i].y;
+            deltaP[3 * i + 2, 0] = EndEffector[i].position.z - PreEndEffector[i].z;
             PreEndEffector[i] = EndEffector[i].position;
         }
-        
+
 
 
         for (int i = 0; i < JointCount; i++)
@@ -81,7 +81,7 @@ public class OMR : MonoBehaviour
                 do
                 {
                     temp = temp.transform.parent;
-                    if(temp.name == Joints[j].name)
+                    if (temp.name == Joints[j].name)
                     {
                         Vector3 a = Vector3.Cross(Joints[j].right, (EndEffector[i].position - Joints[j].position));
                         Vector3 b = Vector3.Cross(Joints[j].up, (EndEffector[i].position - Joints[j].position));
@@ -98,7 +98,7 @@ public class OMR : MonoBehaviour
                         JacobianP[i * 3 + 2, j * 3 + 2] = c.z;
 
                     }
-                } while (temp != Root);                
+                } while (temp != Root);
             }
         }
     }
