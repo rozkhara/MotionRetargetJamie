@@ -7,8 +7,9 @@ public class CollisionAvoidance : MonoBehaviour
 {
     LegacyMatrix JacobianA;
     public int JointCount;
-    public Transform test;
-    public Quaternion[] initRotation;
+    public GameObject[] testPoints;
+    public Quaternion[] initLocalRot;
+    public Quaternion[] initRot;
 
     public Transform Root; //targetRot의 Cha_Hips
     public Transform[] Joints;
@@ -19,16 +20,24 @@ public class CollisionAvoidance : MonoBehaviour
         Joints = Root.GetComponentsInChildren<Transform>();
         JointCount = Joints.Length;
         JacobianA = new LegacyMatrix(3, JointCount * 3);
-        initRotation = new Quaternion[JointCount];
-        for(int i=0; i<JointCount; i++)
+        initLocalRot = new Quaternion[JointCount];
+        initRot = new Quaternion[JointCount];
+        for (int i=0; i<JointCount; i++)
         {
-            initRotation[i] = Joints[i].localRotation;
+            initLocalRot[i] = Joints[i].localRotation;
+            initRot[i] = Joints[i].rotation;
         }
-
-        test.position = Vector3.Lerp(Joints[26].position, Joints[25].position, 0.5f);
         //JacobianMatrix(test, Joints[11]);
         //Debug.Log(JacobianA.ToString());
 
+        int count = 4;
+        testPoints = new GameObject[count];
+        for(int i = 0; i < count; i++)
+        {
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            testPoints[i] = sphere;
+        }
     }
 
     // Update is called once per frame
@@ -44,63 +53,44 @@ public class CollisionAvoidance : MonoBehaviour
         Debug.Log((Joints[i].parent.rotation * Quaternion.Inverse(Joints[i].rotation)).eulerAngles.ToString());
          
          */
-        int i = 25;
         var assembly = Assembly.GetAssembly(typeof(UnityEditor.Editor));
         var type = assembly.GetType("UnityEditor.LogEntries");
         var method = type.GetMethod("Clear");
         method.Invoke(new object(), null);
 
         
-        calcTpos(test, Joints[i]);
+        calcTpos(testPoints[0].transform, Joints[11], Joints[12]);
+        calcTpos(testPoints[1].transform, Joints[7], Joints[8]);
+        calcTpos(testPoints[2].transform, Joints[25], Joints[26]);
+        calcTpos(testPoints[3].transform, Joints[21], Joints[22]);
     }
 
-    void calcTpos(Transform pa, Transform pajoint)
+    void calcTpos(Transform pa, Transform pajoint, Transform joint)
     {
         Transform temp = pajoint;
-        Quaternion r1, deltaLocalRot, rot;
+        Quaternion deltaLocalRot;
         int index;
-        pa.position = Vector3.Lerp(Joints[26].position, Joints[25].position, 0.5f);
+        pa.position = Vector3.Lerp(pajoint.position, joint.position, 0.5f);
+
         while (temp != Root.parent)
         {
-            for(int i=0; i<JointCount; i++)
+            for (int i = 0; i < JointCount; i++)
             {
-                if(Joints[i] == temp)
+                if (Joints[i] == temp)
                 {
-                    
-
                     index = i;
-                    r1 = temp.rotation;
-                    deltaLocalRot = temp.localRotation * Quaternion.Inverse(initRotation[index]); //Tpose 기준으로 회전한 localRotation 회전값 -> 이만큼을 localRotation 기준으로 역회전 시켜주어야 함
-                    rot = Quaternion.Inverse(r1) * Quaternion.Inverse(deltaLocalRot) * r1;
-                    pa.position = rot * (pa.position - temp.position) + temp.position;
+                    deltaLocalRot = temp.localRotation * Quaternion.Inverse(initLocalRot[index]);
 
-                    Debug.Log(temp.name);
-                    Debug.LogFormat("initRotation : {0}", (initRotation[i]).eulerAngles.ToString());
-                    Debug.LogFormat("deltaLocalRot : {0}", (deltaLocalRot).eulerAngles.ToString());
-                    Debug.LogFormat("in globalRot : {0}", (rot).eulerAngles.ToString());
+                    pa.position = Quaternion.Inverse(temp.parent.rotation) * (pa.position - temp.position) + temp.position; 
+                    pa.position = Quaternion.Inverse(deltaLocalRot) * (pa.position - temp.position) + temp.position; 
+                    pa.position = temp.parent.rotation * (pa.position - temp.position) + temp.position; 
 
                     temp = temp.parent;
                     break;
                 }
             }
-        }
 
-        //Debug.Log(temp.name);
-        /*
-         
-        Debug.Log(temp.name);
-        rot = temp.parent.rotation * Quaternion.Inverse(temp.localRotation) * Quaternion.Inverse(temp.parent.rotation);
-        pa.position = rot * (pa.position - temp.position) + temp.position;
-        temp = temp.parent;
-       
-        Debug.Log(temp.name);
-        rot = Quaternion.Inverse(temp.rotation * Quaternion.Inverse(temp.parent.rotation));
-        pa.position = rot * (pa.position - temp.position) + temp.position;
-        temp = temp.parent;
-        Debug.Log(temp.name);
-        rot = Quaternion.Inverse(temp.rotation); // * Quaternion.AngleAxis(90, Vector3.forward)
-        pa.position = rot * (pa.position - temp.position) + temp.position;
-         */
+        }
 
     }
 
