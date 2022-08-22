@@ -301,6 +301,7 @@ public class CalculateRotAngle : MonoBehaviour
            jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].inputJointPosition);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform.SetPositionAndRotation(jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inputJointPosition + initPosition,
                                                                                                         Quaternion.LookRotation(forward) * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation);
+
         foreach (JointPoint jp in jointPoints)
         {
             if (jp.parent != null)
@@ -548,6 +549,8 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].inputJointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].inputJointPosition, initPosition, rotation);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].inputJointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].inputJointPosition, initPosition, rotation);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].inputJointPosition = RotateAround(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].inputJointPosition, initPosition, rotation);
+
+        sNeckJoint = RotateAround(sNeckJoint, initPosition, rotation);
 
         // Low pass filter
         if (f_flag)
