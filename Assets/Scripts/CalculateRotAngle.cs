@@ -194,7 +194,9 @@ public class CalculateRotAngle : MonoBehaviour
 
         JointPoint head = jointPoints[(int)Constants.TargetPositionIndex.Face];
         head.initRotation = jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation;
-        head.inverse = Quaternion.Inverse(Quaternion.LookRotation(forward));
+
+        Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].boneTransform.position;
+        head.inverse = Quaternion.Inverse(Quaternion.LookRotation(forward, v));
         head.inverseRotation = head.inverse * head.initRotation;
 
         return JointPoints;
@@ -323,7 +325,7 @@ public class CalculateRotAngle : MonoBehaviour
             Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].inputJointPosition - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 s = sNeckJoint - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 nose = s - Vector3.Project(s, v);
-            jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
+            jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
         }
 
         //Right Leg
@@ -449,7 +451,7 @@ public class CalculateRotAngle : MonoBehaviour
     private void GetNT()
     {
         sData = DataProcess.Instance.GetSData();
-        var rotation = parentTransform.rotation;
+        var rotation = parentTransform.rotation * Quaternion.AngleAxis(180, Vector3.up);
 
         //Right Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].inputJointPosition =
