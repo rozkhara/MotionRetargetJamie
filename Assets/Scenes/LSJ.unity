@@ -1325,6 +1325,8 @@ MonoBehaviour:
   - {fileID: 1547429439}
   parentTransform: {fileID: 241657228}
   s_parentTransform: {fileID: 876619070}
+  wristType: 2
+  wristBlendParam: 0.5
   KalmanParamQ: 0.001
   KalmanParamR: 0.0015
   f_flag: 0

@@ -30,6 +30,15 @@ public class CalculateRotAngle : MonoBehaviour
     private JointPoint[] s_jointPoints;
     public JointPoint[] s_JointPoints { get { return s_jointPoints; } }
 
+    public enum WristType
+    {
+        FoldContinuation,   //윗팔과 아랫팔 관절이 굽어진 정도에 따라 손목의 pitch값을 조정하는 방법
+        Momentum,           //손목 관절의 속도에 따라 손목에도 관성을 주는 방법
+        NewVectorBlend      //아랫팔과 윗팔 관절 각각에서 손목 관절로 향하는 백터를 blend 하는 방법
+    };
+    [SerializeField] private WristType wristType = new();
+    [SerializeField] private float wristBlendParam = 0.5f;
+
     public float KalmanParamQ = 0.001f;
     public float KalmanParamR = 0.0015f;
 
@@ -327,6 +336,8 @@ public class CalculateRotAngle : MonoBehaviour
             Vector3 nose = s - Vector3.Project(s, v);
             jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
         }
+
+        WristRotation(forward);
 
         //Right Leg
         childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR] = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform;
@@ -695,6 +706,46 @@ public class CalculateRotAngle : MonoBehaviour
         measurement.P.x = KalmanParamR * (measurement.P.x + KalmanParamQ) / (measurement.P.x + KalmanParamQ + KalmanParamR);
         measurement.P.y = KalmanParamR * (measurement.P.y + KalmanParamQ) / (measurement.P.y + KalmanParamQ + KalmanParamR);
         measurement.P.z = KalmanParamR * (measurement.P.z + KalmanParamQ) / (measurement.P.z + KalmanParamQ + KalmanParamR);
+    }
+
+    private void WristRotation(Vector3 forward)
+    {
+        switch (wristType)
+        {
+            case WristType.FoldContinuation:
+                WristFoldContinuation();
+                break;
+            case WristType.Momentum:
+                WristMomentum();
+                break;
+            case WristType.NewVectorBlend:
+                WristNewVectorBlend(forward);
+                break;
+            default:
+                Debug.LogError("Invalid WristType");
+                break;
+        }
+    }
+
+    private void WristFoldContinuation()
+    {
+
+    }
+
+    private void WristMomentum()
+    {
+
+    }
+
+    private void WristNewVectorBlend(Vector3 forward)
+    {
+        Vector3 leftUpperToWrist = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].boneTransform.position;
+        Vector3 leftLowerToWrist = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.position;
+        Vector3 leftBlendedVector = Vector3.Lerp(leftLowerToWrist.normalized, leftUpperToWrist.normalized, wristBlendParam);
+        Vector3 leftBlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.up, wristBlendParam);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.rotation = Quaternion.LookRotation(leftBlendedForward, leftBlendedVector);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.rotation *= Quaternion.AngleAxis(-90f, jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.forward);
+        Debug.Log(leftBlendedVector);
     }
 
 }
