@@ -43,6 +43,8 @@ public class CalculateRotAngle : MonoBehaviour
     private Vector3 sNeckJoint;
     private Vector3[] prevsNeck = new Vector3[6];
 
+    public bool h_flag;
+
     public class JointPoint
     {
         public Vector3 inputJointPosition = new();
@@ -328,6 +330,10 @@ public class CalculateRotAngle : MonoBehaviour
             jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
         }
 
+        if (h_flag) {
+            HandFirst(childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmR], childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR]);
+            HandFirst(childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL], childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL]);
+        }
 
         //Right Leg
         childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR] = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform;
@@ -361,6 +367,7 @@ public class CalculateRotAngle : MonoBehaviour
         //jointPoints[(int)Constants.TargetPositionIndex.BodyHandR].boneTransform = 
 
         //Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine], jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL], )
+
 
     }
 
@@ -705,4 +712,13 @@ public class CalculateRotAngle : MonoBehaviour
         measurement.P.z = KalmanParamR * (measurement.P.z + KalmanParamQ) / (measurement.P.z + KalmanParamQ + KalmanParamR);
     }
 
+    private void HandFirst(Transform UpperJoint, Transform LowerJoint, JointPoint HandJoint)
+    {
+        float deltaUpper = Vector3.Angle(UpperJoint.position - UpperJoint.parent.position, UpperJoint.position - UpperJoint.GetChild(0).position);
+        float deltaLowwer = Vector3.Angle(LowerJoint.position - LowerJoint.parent.position, LowerJoint.position - LowerJoint.GetChild(0).position);
+        float handAngle = deltaLowwer * 70 / 180 - 30 + (deltaUpper - 50) * 50 / 130 - 30;
+        Quaternion rot = Quaternion.AngleAxis(handAngle, Vector3.forward);
+        rot = Quaternion.AngleAxis(handAngle, Vector3.forward);
+        HandJoint.boneTransform.localRotation =  Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot ;
+    }
 }
