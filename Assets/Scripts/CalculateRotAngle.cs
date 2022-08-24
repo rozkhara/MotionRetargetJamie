@@ -50,6 +50,9 @@ public class CalculateRotAngle : MonoBehaviour
 
     public bool n_flag;
     private Vector3 sNeckJoint;
+    private Vector3[] prevsNeck = new Vector3[6];
+
+    public bool h_flag;
 
     public class JointPoint
     {
@@ -328,13 +331,17 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.boneTransform.rotation = Quaternion.LookRotation(jp.inputJointPosition - jp.child.inputJointPosition, forward) * jp.inverseRotation;
             }
         }
-
         if (n_flag)
         {
             Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].inputJointPosition - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 s = sNeckJoint - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 nose = s - Vector3.Project(s, v);
             jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
+        }
+
+        if (h_flag) {
+            HandFirst(childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmR], childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR]);
+            HandFirst(childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL], childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL]);
         }
 
         WristRotation(forward);
@@ -580,6 +587,13 @@ public class CalculateRotAngle : MonoBehaviour
                 }
                 jp.inputJointPosition = jp.prevJointPosition[jp.prevJointPosition.Length - 1];
             }
+
+            prevsNeck[0] = sNeckJoint;
+            for (var i = 1; i < prevsNeck.Length; i++)
+            {
+                prevsNeck[i] = prevsNeck[i] * LowPassParam + prevsNeck[i - 1] * (1f - LowPassParam);
+            }
+            sNeckJoint = prevsNeck[prevsNeck.Length - 1];
         }
 
     }
@@ -748,4 +762,13 @@ public class CalculateRotAngle : MonoBehaviour
         Debug.Log(leftBlendedVector);
     }
 
+    private void HandFirst(Transform UpperJoint, Transform LowerJoint, JointPoint HandJoint)
+    {
+        float deltaUpper = Vector3.Angle(UpperJoint.position - UpperJoint.parent.position, UpperJoint.position - UpperJoint.GetChild(0).position);
+        float deltaLowwer = Vector3.Angle(LowerJoint.position - LowerJoint.parent.position, LowerJoint.position - LowerJoint.GetChild(0).position);
+        float handAngle = deltaLowwer * 70 / 180 - 30 + (deltaUpper - 50) * 50 / 130 - 30;
+        Quaternion rot = Quaternion.AngleAxis(handAngle, Vector3.forward);
+        rot = Quaternion.AngleAxis(handAngle, Vector3.forward);
+        HandJoint.boneTransform.localRotation =  Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot ;
+    }
 }
