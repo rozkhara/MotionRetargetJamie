@@ -1331,7 +1331,6 @@ MonoBehaviour:
   KalmanParamR: 0.0015
   f_flag: 0
   n_flag: 1
-  h_flag: 0
 --- !u!114 &1714372485
 MonoBehaviour:
   m_ObjectHideFlags: 0

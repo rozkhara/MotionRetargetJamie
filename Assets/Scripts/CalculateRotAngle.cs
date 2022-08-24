@@ -749,7 +749,7 @@ public class CalculateRotAngle : MonoBehaviour
 
     private void WristMomentum()
     {
-
+        Debug.Log("WIP");
     }
 
     private void WristNewVectorBlend()
