@@ -132,6 +132,7 @@ public class DataProcess : MonoBehaviour
             try
             {
                 CheckFrameIndex();
+                index++;
                 parseFlag = true;
             }
             catch (System.Exception e)

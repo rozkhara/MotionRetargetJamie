@@ -93,7 +93,7 @@ public class PositionWiseUpdate : MonoBehaviour
             childNodes[(int)Constants.TargetPositionIndex.Cha_LowerLegR].position = newTransform[2];
             childNodes[(int)Constants.TargetPositionIndex.Cha_FootR].position = newTransform[3];
 
-            DataProcess.Instance.index++;
+            //DataProcess.Instance.index++;
         }
     }
 
