@@ -57,6 +57,8 @@ public class CalculateRotAngle : MonoBehaviour
     private Vector3 sNeckJoint;
     private Vector3[] prevsNeck = new Vector3[6];
 
+    public bool fv_flag = true;
+
     public class JointPoint
     {
         public Vector3 inputJointPosition = new();
@@ -182,13 +184,17 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL];
 
         //Right Arm
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR];
+
+        if (fv_flag)
+        {
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL];
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR];
+        }
 
         //Set Inverse
         Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].boneTransform.position,
@@ -354,16 +360,22 @@ public class CalculateRotAngle : MonoBehaviour
             jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
         }
 
-        //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
+        if (fv_flag)
+        {
+            //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
 
-        //이거 위치를 위 아래중에 어디인지 모르겠음 
-        WristRotation(forward);
+            //이거 위치를 위 아래중에 어디인지 모르겠음 
+            WristRotation();
 
 
-        BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL], meshBlendParam);
-        BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR], meshBlendParam);
+            BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL], meshBlendParam);
+            BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR], meshBlendParam);
+
+        }
+
+        
 
         //WristRotation(forward); 
 
