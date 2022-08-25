@@ -200,7 +200,7 @@ public class CalculateRotAngle : MonoBehaviour
             {
                 jp.initRotation = jp.boneTransform.rotation;
             }
-                
+
             if (jp.parent != null)
             {
                 if (jp.child != null)
@@ -359,7 +359,7 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
 
         //이거 위치를 위 아래중에 어디인지 모르겠음 
-        WristRotation(forward);
+        WristRotation();
 
 
         BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL], meshBlendParam);
@@ -779,13 +779,13 @@ public class CalculateRotAngle : MonoBehaviour
         Vector3 WristToUpper = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.position;
         Vector3 WristToLower = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.position;
         Vector3 BlendedVector = Vector3.Lerp(WristToLower.normalized, WristToUpper.normalized, wristBlendParam);
-        Vector3 BlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.up, wristBlendParam);
+        Vector3 BlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].boneTransform.up, wristBlendParam);
         Vector3 tempUp = Vector3.Cross(BlendedVector, BlendedForward);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.rotation = Quaternion.LookRotation(BlendedForward, -tempUp);
         WristToUpper = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.position;
         WristToLower = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.position;
         BlendedVector = Vector3.Lerp(WristToLower.normalized, WristToUpper.normalized, wristBlendParam);
-        BlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].boneTransform.up, wristBlendParam);
+        BlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].boneTransform.up, wristBlendParam);
         tempUp = Vector3.Cross(BlendedVector, BlendedForward);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.rotation = Quaternion.LookRotation(-BlendedForward, tempUp);
     }
@@ -796,7 +796,7 @@ public class CalculateRotAngle : MonoBehaviour
         float deltaLower = Vector3.Angle(LowerJoint.position - LowerJoint.parent.position, LowerJoint.position - LowerJoint.GetChild(0).position);
         float handPitch = Map(deltaLower, 0, 180, -10, 15) + Map(deltaUpper, 0, 115, -50, 20);
         Quaternion rot = Quaternion.AngleAxis(handPitch, Vector3.forward);
-        HandJoint.boneTransform.localRotation =  Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot * Quaternion.Slerp(rot, Quaternion.identity, 0.1f) ;
+        HandJoint.boneTransform.localRotation = Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot * Quaternion.Slerp(rot, Quaternion.identity, 0.1f);
     }
     public float Map(float value, float i_from, float i_to, float o_from, float o_to)
     {
