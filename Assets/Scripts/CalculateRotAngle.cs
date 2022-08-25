@@ -42,6 +42,7 @@ public class CalculateRotAngle : MonoBehaviour
     /// Lower the value, closer to wrist
     /// </summary>
     [SerializeField] private float wristBlendParam = 0.5f;
+    [SerializeField] private float meshBlendParam = 0.5f;
 
     public float KalmanParamQ = 0.001f;
     public float KalmanParamR = 0.0015f;
@@ -361,8 +362,8 @@ public class CalculateRotAngle : MonoBehaviour
         WristRotation(forward);
 
 
-        BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL]);
-        BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR]);
+        BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL], meshBlendParam);
+        BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR], meshBlendParam);
 
         //WristRotation(forward); 
 
@@ -792,7 +793,7 @@ public class CalculateRotAngle : MonoBehaviour
     {
         float deltaUpper = Vector3.Angle(UpperJoint.position - UpperJoint.parent.position, UpperJoint.position - UpperJoint.GetChild(0).position);
         float deltaLower = Vector3.Angle(LowerJoint.position - LowerJoint.parent.position, LowerJoint.position - LowerJoint.GetChild(0).position);
-        float handPitch = Map(deltaLower, 0, 180, -10, 20) + Map(deltaUpper, 0, 115, -50, 20);
+        float handPitch = Map(deltaLower, 0, 180, -10, 15) + Map(deltaUpper, 0, 115, -50, 20);
         Quaternion rot = Quaternion.AngleAxis(handPitch, Vector3.forward);
         HandJoint.boneTransform.localRotation =  Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot * Quaternion.Slerp(rot, Quaternion.identity, 0.1f) ;
     }
@@ -812,11 +813,11 @@ public class CalculateRotAngle : MonoBehaviour
         }
     }
 
-    private void BlendMeshRoll(JointPoint LowerArmJoint, JointPoint HandJoint)
+    private void BlendMeshRoll(JointPoint LowerArmJoint, JointPoint HandJoint, float param)
     {
         Quaternion Rot = LowerArmJoint.boneTransform.localRotation;
         float xAngle = Mathf.Atan2(2 * (Rot.w * Rot.x + Rot.y * Rot.z), 1 - 2 * (Rot.x * Rot.x + Rot.y * Rot.y)) * Mathf.Rad2Deg;
-        Quaternion Qtemp = Quaternion.AngleAxis(xAngle / 2, LowerArmJoint.boneTransform.right);
+        Quaternion Qtemp = Quaternion.AngleAxis(xAngle * param, LowerArmJoint.boneTransform.right);
         LowerArmJoint.boneTransform.rotation = Quaternion.Inverse(Qtemp) * LowerArmJoint.boneTransform.rotation;
         HandJoint.boneTransform.rotation = Qtemp * HandJoint.boneTransform.rotation;
     }
