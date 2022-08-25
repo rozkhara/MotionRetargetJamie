@@ -354,18 +354,17 @@ public class CalculateRotAngle : MonoBehaviour
         }
 
         //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.rotation = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.boneTransform.rotation * Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
 
         //이거 위치를 위 아래중에 어디인지 모르겠음 
-        //WristRotation(forward);
+        WristRotation(forward);
+
 
         BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL]);
         BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR]);
 
-        WristRotation(forward); 
+        //WristRotation(forward); 
 
         //Right Leg
         childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR] = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform;
@@ -779,24 +778,38 @@ public class CalculateRotAngle : MonoBehaviour
         Vector3 WristToLower = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.position;
         Vector3 BlendedVector = Vector3.Lerp(WristToLower.normalized, WristToUpper.normalized, wristBlendParam);
         Vector3 BlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].boneTransform.up, wristBlendParam);
-        Vector3 temp = Vector3.Cross(BlendedVector, BlendedForward);
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.rotation = Quaternion.LookRotation(BlendedForward, -temp);
+        Vector3 temp = Vector3.Cross(BlendedVector, jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.forward);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.rotation = Quaternion.LookRotation(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.forward, -temp);
         WristToUpper = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.position;
         WristToLower = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.position;
         BlendedVector = Vector3.Lerp(WristToLower.normalized, WristToUpper.normalized, wristBlendParam);
         BlendedForward = Vector3.Lerp(jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR].boneTransform.up, jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].boneTransform.up, wristBlendParam);
-        temp = Vector3.Cross(BlendedVector, BlendedForward);
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.rotation = Quaternion.LookRotation(-BlendedForward, temp);
+        temp = Vector3.Cross(BlendedVector, -jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.forward);
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.rotation = Quaternion.LookRotation(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.forward, temp);
     }
 
     private void HandFirst(Transform UpperJoint, Transform LowerJoint, JointPoint HandJoint)
     {
         float deltaUpper = Vector3.Angle(UpperJoint.position - UpperJoint.parent.position, UpperJoint.position - UpperJoint.GetChild(0).position);
         float deltaLower = Vector3.Angle(LowerJoint.position - LowerJoint.parent.position, LowerJoint.position - LowerJoint.GetChild(0).position);
-        float handPitch = deltaLower * 70 / 180 - 30 + (deltaUpper - 50) * 50 / 130 - 30;
-        float handRoll = (deltaUpper - 75) * 100 / 90 + 50; //deltaLower * 160 / 180 - 80 +
-        Quaternion rot = Quaternion.AngleAxis(handPitch, Vector3.forward); // * Quaternion.AngleAxis(handRoll, Vector3.right);
+        float handPitch = Map(deltaLower, 0, 180, -10, 20) + Map(deltaUpper, 0, 115, -50, 20);
+        Quaternion rot = Quaternion.AngleAxis(handPitch, Vector3.forward);
         HandJoint.boneTransform.localRotation =  Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot * Quaternion.Slerp(rot, Quaternion.identity, 0.1f) ;
+    }
+    public float Map(float value, float i_from, float i_to, float o_from, float o_to)
+    {
+        if (value <= i_from)
+        {
+            return o_from;
+        }
+        else if (value >= i_to)
+        {
+            return o_to;
+        }
+        else
+        {
+            return (o_to - o_from) * ((value - i_from) / (i_to - i_from)) + o_from;
+        }
     }
 
     private void BlendMeshRoll(JointPoint LowerArmJoint, JointPoint HandJoint)
