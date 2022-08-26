@@ -363,8 +363,10 @@ public class CalculateRotAngle : MonoBehaviour
         if (fv_flag)
         {
             //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
-            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
-            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * 
+                                                                                                                       jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * 
+                                                                                                                       jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
 
             //이거 위치를 위 아래중에 어디인지 모르겠음 
             WristRotation();
