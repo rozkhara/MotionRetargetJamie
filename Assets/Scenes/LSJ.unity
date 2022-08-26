@@ -1327,10 +1327,13 @@ MonoBehaviour:
   s_parentTransform: {fileID: 876619070}
   wristType: 2
   wristBlendParam: 0.7
+  meshBlendParam: 0.5
   KalmanParamQ: 0.001
   KalmanParamR: 0.0015
   f_flag: 0
+  SourceOn: 1
   n_flag: 1
+  fv_flag: 1
 --- !u!114 &1714372485
 MonoBehaviour:
   m_ObjectHideFlags: 0

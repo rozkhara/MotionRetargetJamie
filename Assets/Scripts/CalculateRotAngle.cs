@@ -50,6 +50,7 @@ public class CalculateRotAngle : MonoBehaviour
     private bool flag = true;
     private bool t_flag = true;
     public bool f_flag;
+    public bool SourceOn;
 
     private float LowPassParam = 0.1f;
 
@@ -87,7 +88,7 @@ public class CalculateRotAngle : MonoBehaviour
 
     private void Awake()
     {
-        TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
+        if (SourceOn) TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
     }
 
     private void Update()
@@ -97,13 +98,10 @@ public class CalculateRotAngle : MonoBehaviour
             Init();
             flag = false;
         }
-        if (t_flag)
+        if (SourceOn && t_flag && !TPA.flag)
         {
-            if (!TPA.flag)
-            {
-                Init_s();
-                t_flag = false;
-            }
+            Init_s();
+            t_flag = false;
         }
         if (DataProcess.Instance.parseFlag)
         {
@@ -111,7 +109,7 @@ public class CalculateRotAngle : MonoBehaviour
             {
                 RotUpdate();
             }
-            if (!t_flag)
+            if (SourceOn && !t_flag)
             {
                 RotUpdate_s();
             }
@@ -363,9 +361,9 @@ public class CalculateRotAngle : MonoBehaviour
         if (fv_flag)
         {
             //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
-            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) * 
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) *
                                                                                                                        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
-            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) * 
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) *
                                                                                                                        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
 
             //이거 위치를 위 아래중에 어디인지 모르겠음 
@@ -377,7 +375,7 @@ public class CalculateRotAngle : MonoBehaviour
 
         }
 
-        
+
 
         //WristRotation(forward); 
 
