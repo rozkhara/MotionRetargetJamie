@@ -205,12 +205,12 @@ public class CalculateRotAngle : MonoBehaviour
             {
                 if (jp.child != null)
                 {
-                    Vector3 fv = jp.parent.inputJointPosition - jp.inputJointPosition;
-                    jp.inverse = GetInverse(jp, jp.child, -fv);
+                    Vector3 fv = jp.boneTransform.parent.position - jp.boneTransform.position;
+                    jp.inverse = GetInverse(jp, jp.child, fv);
                     jp.inverseRotation = jp.inverse * jp.initRotation;
                 }
             }
-            else if (jp.child != null)
+            else if (jp.child != null) 
             {
                 jp.inverse = GetInverse(jp, jp.child, forward);
                 jp.inverseRotation = jp.inverse * jp.initRotation;
@@ -338,7 +338,7 @@ public class CalculateRotAngle : MonoBehaviour
                 if (jp.child != null)
                 {
                     Vector3 fv = jp.parent.inputJointPosition - jp.inputJointPosition;
-                    jp.boneTransform.rotation = Quaternion.LookRotation(jp.inputJointPosition - jp.child.inputJointPosition, -fv) * jp.inverseRotation;
+                    jp.boneTransform.rotation = Quaternion.LookRotation(jp.inputJointPosition - jp.child.inputJointPosition, fv) * jp.inverseRotation;
                 }
             }
             else if (jp.child != null)
