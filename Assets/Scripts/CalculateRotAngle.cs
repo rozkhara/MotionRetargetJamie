@@ -47,18 +47,18 @@ public class CalculateRotAngle : MonoBehaviour
     public float KalmanParamQ = 0.001f;
     public float KalmanParamR = 0.0015f;
 
-    private bool flag = true;
-    private bool t_flag = true;
-    public bool f_flag;
-    public bool SourceOn;
+    private bool IsInitialized = true;
+    private bool IsTPALoaded = true;
+    public bool IsFilterOn;
+    public bool IsSourceSkelOn;
 
     private float LowPassParam = 0.1f;
 
-    public bool n_flag;
+    public bool IsNeckRotationOn;
     private Vector3 sNeckJoint;
     private Vector3[] prevsNeck = new Vector3[6];
 
-    public bool fv_flag = true;
+    public bool IsFVRotationOn = true;
 
     public class JointPoint
     {
@@ -88,28 +88,28 @@ public class CalculateRotAngle : MonoBehaviour
 
     private void Awake()
     {
-        if (SourceOn) TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
+        if (IsSourceSkelOn) TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
     }
 
     private void Update()
     {
-        if (flag)
+        if (IsInitialized)
         {
             Init();
-            flag = false;
+            IsInitialized = false;
         }
-        if (SourceOn && t_flag && !TPA.flag)
+        if (IsSourceSkelOn && !IsTPALoaded && !TPA.flag)
         {
             Init_s();
-            t_flag = false;
+            IsTPALoaded = true;
         }
         if (DataProcess.Instance.parseFlag)
         {
-            if (!flag)
+            if (!IsInitialized)
             {
                 RotUpdate();
             }
-            if (SourceOn && !t_flag)
+            if (IsSourceSkelOn && IsTPALoaded)
             {
                 RotUpdate_s();
             }
@@ -182,7 +182,7 @@ public class CalculateRotAngle : MonoBehaviour
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR];
 
-        if (fv_flag)
+        if (IsFVRotationOn)
         {
             jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
             jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL];
@@ -346,7 +346,7 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.boneTransform.rotation = Quaternion.LookRotation(jp.inputJointPosition - jp.child.inputJointPosition, forward) * jp.inverseRotation;
             }
         }
-        if (n_flag)
+        if (IsNeckRotationOn)
         {
             Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].inputJointPosition - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 s = sNeckJoint - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
@@ -354,7 +354,7 @@ public class CalculateRotAngle : MonoBehaviour
             jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
         }
 
-        if (fv_flag)
+        if (IsFVRotationOn)
         {
             //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
             jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) *
@@ -601,7 +601,7 @@ public class CalculateRotAngle : MonoBehaviour
         sNeckJoint = RotateAround(sNeckJoint, initPosition, rotation);
 
         // Low pass filter
-        if (f_flag)
+        if (IsFilterOn)
         {
             foreach (var jp in jointPoints)
             {
@@ -830,4 +830,13 @@ public class CalculateRotAngle : MonoBehaviour
         LowerArmJoint.boneTransform.rotation = Quaternion.Inverse(Qtemp) * LowerArmJoint.boneTransform.rotation;
         HandJoint.boneTransform.rotation = Qtemp * HandJoint.boneTransform.rotation;
     }
+
+    private void IKCCD()
+    {
+
+        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].inputJointPosition;
+        
+        
+    }
+
 }
