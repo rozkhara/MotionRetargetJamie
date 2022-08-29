@@ -327,10 +327,10 @@ public class CalculateRotAngle : MonoBehaviour
     {
         GetNT();
         Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].inputJointPosition,
-           jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].inputJointPosition,
-           jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].inputJointPosition);
+                                         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].inputJointPosition,
+                                         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].inputJointPosition);
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].boneTransform.SetPositionAndRotation(jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inputJointPosition + initPosition,
-                                                                                                        Quaternion.LookRotation(forward) * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation);
+                                                                                                      Quaternion.LookRotation(forward) * jointPoints[(int)Constants.TargetPositionIndex.Cha_Hips].inverseRotation);
         foreach (JointPoint jp in jointPoints)
         {
             if (jp.parent != null)
