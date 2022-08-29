@@ -41,8 +41,8 @@ public class CalculateRotAngle : MonoBehaviour
     /// <summary>
     /// Lower the value, closer to wrist
     /// </summary>
-    [SerializeField] private float wristBlendParam = 0.5f;
-    [SerializeField] private float meshBlendParam = 0.5f;
+    [SerializeField] [Range(0, 1)] private float wristBlendParam = 0.5f;
+    [SerializeField] [Range(0, 1)] private float meshBlendParam = 0.5f;
 
     public float KalmanParamQ = 0.001f;
     public float KalmanParamR = 0.0015f;
@@ -161,18 +161,12 @@ public class CalculateRotAngle : MonoBehaviour
         //Right Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR];
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeR];
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_FootR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
 
         //Left Leg
         jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL];
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_ToeL];
-        //jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
         jointPoints[(int)Constants.TargetPositionIndex.Cha_FootL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL];
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL];
 
         //Spinal
         jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine].child = jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest];
@@ -190,8 +184,10 @@ public class CalculateRotAngle : MonoBehaviour
 
         if (fv_flag)
         {
-            jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL];
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR];
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerLegL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL];
             jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmR];
+            jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL].parent = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperArmL];
         }
 
         //Set Inverse
