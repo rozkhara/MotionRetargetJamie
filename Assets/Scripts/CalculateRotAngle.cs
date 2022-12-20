@@ -22,6 +22,11 @@ public class CalculateRotAngle : MonoBehaviour
     public Transform parentTransform;
     public Transform s_parentTransform;
 
+    private Transform antennaL;
+    private Transform antennaR;
+
+    private HeadGazeTarget HT;
+
     private TposeAlignment TPA;
 
     private JointPoint[] jointPoints;
@@ -89,6 +94,8 @@ public class CalculateRotAngle : MonoBehaviour
     private void Awake()
     {
         if (IsSourceSkelOn) TPA = GameObject.Find("sourceTpose").GetComponent<TposeAlignment>();
+        if (parentTransform) HT = parentTransform.GetComponent<HeadGazeTarget>();
+
     }
 
     private void Update()
@@ -210,7 +217,7 @@ public class CalculateRotAngle : MonoBehaviour
                     jp.inverseRotation = jp.inverse * jp.initRotation;
                 }
             }
-            else if (jp.child != null) 
+            else if (jp.child != null)
             {
                 jp.inverse = GetInverse(jp, jp.child, forward);
                 jp.inverseRotation = jp.inverse * jp.initRotation;
@@ -226,6 +233,9 @@ public class CalculateRotAngle : MonoBehaviour
         Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.position - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].boneTransform.position;
         head.inverse = Quaternion.Inverse(Quaternion.LookRotation(forward, v));
         head.inverseRotation = head.inverse * head.initRotation;
+
+        antennaL = GameObject.Find("Cha_Antenna_L").transform;
+        antennaR = GameObject.Find("Cha_Antenna_R").transform;
 
         return JointPoints;
     }
@@ -346,12 +356,14 @@ public class CalculateRotAngle : MonoBehaviour
                 jp.boneTransform.rotation = Quaternion.LookRotation(jp.inputJointPosition - jp.child.inputJointPosition, forward) * jp.inverseRotation;
             }
         }
+
         if (IsNeckRotationOn)
         {
             Vector3 v = jointPoints[(int)Constants.TargetPositionIndex.Face].inputJointPosition - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 s = sNeckJoint - jointPoints[(int)Constants.TargetPositionIndex.Cha_Chest].inputJointPosition;
             Vector3 nose = s - Vector3.Project(s, v);
-            jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = Quaternion.LookRotation(nose, v) * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
+            Quaternion newQT = HT.GetTrackObjViewVector(nose, v, antennaL.position, antennaR.position);
+            jointPoints[(int)Constants.TargetPositionIndex.Face].boneTransform.rotation = newQT * jointPoints[(int)Constants.TargetPositionIndex.Face].inverseRotation;
         }
 
         if (IsFVRotationOn)
@@ -806,6 +818,13 @@ public class CalculateRotAngle : MonoBehaviour
         Quaternion rot = Quaternion.AngleAxis(handPitch, Vector3.forward);
         HandJoint.boneTransform.localRotation = Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot * Quaternion.Slerp(rot, Quaternion.identity, 0.1f);
     }
+
+    private Vector3 FindCenter(Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+
+        return Vector3.zero;
+    }
+
     public float Map(float value, float i_from, float i_to, float o_from, float o_to)
     {
         if (value <= i_from)
