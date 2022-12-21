@@ -1442,14 +1442,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JointCount: 0
-  EECount: 1
-  testPoints: []
-  initLocalRot: []
-  initRot: []
-  Root: {fileID: 1835193852}
-  Joints: []
+  EESphere: []
   SRoot: {fileID: 343614052}
   SJoints: []
+  Root: {fileID: 1835193852}
+  Joints: []
 --- !u!4 &1346113285
 Transform:
   m_ObjectHideFlags: 0
