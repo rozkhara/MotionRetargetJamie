@@ -7,18 +7,22 @@ public class CreateEETarget : MonoBehaviour
 {    
     LegacyMatrix JacobianA;
     LegacyMatrix InverseA;
+    LegacyMatrix ErrorA;
+    LegacyMatrix deltaA;
+    Vector3[] rotateAxis;
+    int[] EEindex = { (int)Constants.TargetPositionIndex.Cha_HandR, (int)Constants.TargetPositionIndex.Cha_HandL, (int)Constants.TargetPositionIndex.Cha_FootR, (int)Constants.TargetPositionIndex.Cha_FootL };
+
     //LegacyMatrix SelectMat;
-    private bool[] isSelect;
     public int JointCount;
-    public GameObject[] testPoints;
-    public Quaternion[] initLocalRot;
-    public Quaternion[] initRot;
+
+
+    public GameObject[] EESphere;
+    public Transform SRoot;
+    public Transform[] SJoints;
 
     public Transform Root; //targetRot의 Cha_Hips
     public Transform[] Joints;
 
-    public Transform SRoot;
-    public Transform[] SJoints;
 
     // Start is called before the first frame update
     void Start()
@@ -26,51 +30,92 @@ public class CreateEETarget : MonoBehaviour
         Joints = Root.GetComponentsInChildren<Transform>();
         SJoints = SRoot.GetComponentsInChildren<Transform>();
         JointCount = Joints.Length;
-        JacobianA = new LegacyMatrix(3, JointCount * 3);
-        InverseA = new LegacyMatrix(JointCount * 3, 3);
-        //SelectMat = new LegacyMatrix(JointCount * 3, JointCount * 3);
-        initLocalRot = new Quaternion[JointCount];
-        initRot = new Quaternion[JointCount];
+        JacobianA = new LegacyMatrix(3 * EEindex.Length, JointCount);
+        InverseA = new LegacyMatrix(JointCount, 3 * EEindex.Length);
+        ErrorA = new LegacyMatrix(3 * EEindex.Length, 1);
+        rotateAxis = new Vector3[JointCount];
 
-        //jacobianA의 해당 열(joint)이 non zero인 경우 true
-        //isSelect가 true인 joint는 collision avoidance가 적용되어야 하고, false이면 기존 값을 그대로 가져와야 함
-        isSelect = new bool[JointCount];
-        for (int i = 0; i < JointCount; i++)
-        {
-            initLocalRot[i] = Joints[i].localRotation;
-            initRot[i] = Joints[i].rotation;
-        }
-
-        int count = 4;
-        testPoints = new GameObject[count];
-        for (int i = 0; i < count; i++)
+        EESphere = new GameObject[EEindex.Length];
+        for (int i = 0; i < EEindex.Length; i++)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            testPoints[i] = sphere;
+            EESphere[i] = sphere;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //console clear
+        ClearConsole();
+
+        for(int i = 0; i < EEindex.Length; i++)
+        {
+            UpdateTargetPos(EESphere[i].transform, SJoints[EEindex[i]]);
+        }
+
+    }
+
+    void ClearConsole()
+    {
         var assembly = Assembly.GetAssembly(typeof(UnityEditor.Editor));
         var type = assembly.GetType("UnityEditor.LogEntries");
         var method = type.GetMethod("Clear");
         method.Invoke(new object(), null);
+    }
 
-        UpdateTargetPos(testPoints[0].transform, SJoints[12]);
-        UpdateTargetPos(testPoints[1].transform, SJoints[8]);
-        UpdateTargetPos(testPoints[2].transform, SJoints[26]);
-        UpdateTargetPos(testPoints[3].transform, SJoints[22]);
+    private void LateUpdate()
+    {
+        IterateIK();
+    }
 
-        JacobianMatrix(testPoints[0].transform, Joints[11]);
-        Debug.Log(testPoints[0].transform.position.ToString());
-        Debug.Log(JacobianA.ToString());
-        InverseA = (JacobianA.T * JacobianA);
-        Debug.Log(JacobianA.T);
-        //Debug.Log((InverseA * JacobianA).ToString());
+    void IterateIK()
+    {
+        int count = JointCount;
+        int iteration = 0;
+
+        while (count != 0)
+        {
+            Vector3 error = new Vector3();
+
+            for (int i = 0; i < EEindex.Length; i++)
+            {
+                error = EESphere[i].transform.position - Joints[EEindex[i]].position;
+                ErrorA[i * 3 + 0, 0] = error.x;
+                ErrorA[i * 3 + 1, 0] = error.y;
+                ErrorA[i * 3 + 2, 0] = error.z;
+
+            }
+            for (int i = 0; i < EEindex.Length; i++)
+            {
+                JacobianMatrix(EESphere[i].transform, Joints[EEindex[i]]);
+            }
+            InverseA = JacobianA.T * ((JacobianA * JacobianA.T).Inverse());
+            deltaA = InverseA * ErrorA;
+            count = UpdateRot(error.magnitude * 100);
+            iteration++;
+        }
+        Debug.Log(iteration);
+
+    }
+
+    int UpdateRot(float s) // update한 joint 수를 반환
+    {
+        int count = 0;
+        float threshold = 0.01f;
+
+        for (int j = 0; j < JointCount; j++)
+        {
+            Debug.Log(rotateAxis[j]);
+            if (rotateAxis[j] != null && Mathf.Abs(deltaA[j,0]) > threshold)
+            {
+                Joints[j].RotateAround(Joints[j].position, rotateAxis[j], deltaA[j, 0] * s);
+                //Debug.LogFormat("Joint[{0}] axis: {1} angle: {2}", j, rotateAxis[j], deltaA[j,0]);
+                count++;
+            }
+        }
+
+        return count;
     }
 
     void UpdateTargetPos(Transform Pos, Transform nextPos)
@@ -78,37 +123,23 @@ public class CreateEETarget : MonoBehaviour
         Pos.position = Root.position + (nextPos.position - SRoot.position) * 0.7f; //0.7은 임의의 값
     }
 
-    void JacobianMatrix(Transform tee, Transform pee) //pajoint는 pa가 속해있는 joint
+    void JacobianMatrix(Transform tee, Transform see)
     {
-        Transform temp = pee;
-        //만약 해당 end effector가 해당 joint의 자손일 경우 Jacobian값 채우기
-        while (temp != Root.parent)
+        Transform temp = see.transform.parent;
+        while(temp.childCount <= 1)
         {
             for (int j = 0; j < JointCount; j++)
             {
                 if (temp.name == Joints[j].name)
                 {
-                    Vector3 a = Vector3.Cross(Joints[j].right, (tee.position - Joints[j].position));
-                    Vector3 b = Vector3.Cross(Joints[j].up, (tee.position - Joints[j].position));
-                    Vector3 c = Vector3.Cross(Joints[j].forward, (tee.position - Joints[j].position));
-
-                    //현재 Joint가 아니라 Tpose 기준으로 계산
-                    //Vector3 a = Vector3.Cross(TJoints[j].right, (pa.position - TJoints[j].position));
-                    //Vector3 b = Vector3.Cross(TJoints[j].up, (pa.position - TJoints[j].position));
-                    //Vector3 c = Vector3.Cross(TJoints[j].forward, (pa.position - TJoints[j].position));
-
-                    JacobianA[0, j * 3] = a.x;
-                    JacobianA[1, j * 3] = a.y;
-                    JacobianA[2, j * 3] = a.z;
-                    JacobianA[0, j * 3 + 1] = b.x;
-                    JacobianA[1, j * 3 + 1] = b.y;
-                    JacobianA[2, j * 3 + 1] = b.z;
-                    JacobianA[0, j * 3 + 2] = c.x;
-                    JacobianA[1, j * 3 + 2] = c.y;
-                    JacobianA[2, j * 3 + 2] = c.z;
+                    Vector3 norm = Vector3.Cross(tee.position - see.position, see.position - temp.position).normalized;
+                    rotateAxis[j] = norm;
+                    Vector3 elementJ = Vector3.Cross(norm, (see.position - temp.position));
+                    JacobianA[0, j] = elementJ.x;
+                    JacobianA[1, j] = elementJ.y;
+                    JacobianA[2, j] = elementJ.z;
 
                     temp = temp.transform.parent;
-                    isSelect[j] = true;
                     break;
                 }
             }
