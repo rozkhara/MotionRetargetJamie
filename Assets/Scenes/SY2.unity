@@ -291,7 +291,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.3
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1441,7 +1441,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cde3a290cef98224895f4d45ae828730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JointCount: 0
   EESphere: []
   SRoot: {fileID: 343614052}
   SJoints: []

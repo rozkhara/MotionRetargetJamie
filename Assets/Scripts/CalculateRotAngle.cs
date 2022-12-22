@@ -831,12 +831,5 @@ public class CalculateRotAngle : MonoBehaviour
         HandJoint.boneTransform.rotation = Qtemp * HandJoint.boneTransform.rotation;
     }
 
-    private void IKCCD()
-    {
-
-        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].inputJointPosition;
-        
-        
-    }
 
 }
