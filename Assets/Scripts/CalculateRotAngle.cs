@@ -44,19 +44,12 @@ public class CalculateRotAngle : MonoBehaviour
     [SerializeField] [Range(0, 1)] private float wristBlendParam = 0.5f;
     [SerializeField] [Range(0, 1)] private float meshBlendParam = 0.5f;
 
-    public float KalmanParamQ = 0.001f;
-    public float KalmanParamR = 0.0015f;
-
     private bool IsInitialized = true;
     private bool IsTPALoaded = true;
-    public bool IsFilterOn;
     public bool IsSourceSkelOn;
-
-    private float LowPassParam = 0.1f;
 
     public bool IsNeckRotationOn;
     private Vector3 sNeckJoint;
-    private Vector3[] prevsNeck = new Vector3[6];
 
     public bool IsFVRotationOn = true;
 
@@ -72,13 +65,6 @@ public class CalculateRotAngle : MonoBehaviour
 
         public JointPoint child = null;
         public JointPoint parent = null;
-
-        // For Kalman filter
-        public Vector3 P = new Vector3();
-        public Vector3 X = new Vector3();
-        public Vector3 K = new Vector3();
-
-        public Vector3[] PrevPos3D = new Vector3[6];
     }
 
     private void OnDrawGizmos()
@@ -356,24 +342,17 @@ public class CalculateRotAngle : MonoBehaviour
 
         if (IsFVRotationOn)
         {
-            //무한 회전 해결 방법 -> 그냥 init이 아니라, lowerArm의 변경되는 rotation에 hand의 initial localRotation만 초기값으로 넣어 주어야 함 (아래 두 방식 중에 아무거나 하나 적용)
             jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].parent.initRotation) *
                                                                                                                        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL].initRotation;
             jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].boneTransform.localRotation = Quaternion.Inverse(jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].parent.initRotation) *
                                                                                                                        jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR].initRotation;
 
-            //이거 위치를 위 아래중에 어디인지 모르겠음 
             WristRotation();
-
 
             BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmL], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandL], meshBlendParam);
             BlendMeshRoll(jointPoints[(int)Constants.TargetPositionIndex.Cha_LowerArmR], jointPoints[(int)Constants.TargetPositionIndex.Cha_HandR], meshBlendParam);
 
         }
-
-
-
-        //WristRotation(forward); 
 
         //Right Leg
         childNodes[(int)Constants.TargetPositionIndex.Cha_UpperLegR] = jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegR].boneTransform;
@@ -600,30 +579,6 @@ public class CalculateRotAngle : MonoBehaviour
 
         sNeckJoint = RotateAround(sNeckJoint, initPosition, rotation);
 
-        // Low pass filter
-        if (IsFilterOn)
-        {
-            foreach (var jp in jointPoints)
-            {
-                //칼만 필터 적용을 위해서는 영상과 Barracuda를 이용해서 예측값을 estimatedJointPosition에 채워주어야 하는 것 같음!
-                //KalmanUpdate(jp);
-
-                jp.prevJointPosition[0] = jp.inputJointPosition;
-                for (var i = 1; i < jp.prevJointPosition.Length; i++)
-                {
-                    jp.prevJointPosition[i] = jp.prevJointPosition[i] * LowPassParam + jp.prevJointPosition[i - 1] * (1f - LowPassParam);
-                }
-                jp.inputJointPosition = jp.prevJointPosition[jp.prevJointPosition.Length - 1];
-            }
-
-            prevsNeck[0] = sNeckJoint;
-            for (var i = 1; i < prevsNeck.Length; i++)
-            {
-                prevsNeck[i] = prevsNeck[i] * LowPassParam + prevsNeck[i - 1] * (1f - LowPassParam);
-            }
-            sNeckJoint = prevsNeck[prevsNeck.Length - 1];
-        }
-
     }
 
     private void GetNT_s()
@@ -731,25 +686,6 @@ public class CalculateRotAngle : MonoBehaviour
         s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].inputJointPosition = RotateAround(s_jointPoints[(int)Constants.SourcePositionIndex.right_hand].inputJointPosition, s_initPosition, rotation);
     }
 
-    private void KalmanUpdate(JointPoint measurement)
-    {
-        MeasurementUpdate(measurement);
-        measurement.inputJointPosition.x = measurement.X.x + (measurement.estimatedJointPosition.x - measurement.X.x) * measurement.K.x;
-        measurement.inputJointPosition.y = measurement.X.y + (measurement.estimatedJointPosition.y - measurement.X.y) * measurement.K.y;
-        measurement.inputJointPosition.z = measurement.X.z + (measurement.estimatedJointPosition.z - measurement.X.z) * measurement.K.z;
-        measurement.X = measurement.inputJointPosition;
-    }
-
-    private void MeasurementUpdate(JointPoint measurement)
-    {
-        measurement.K.x = (measurement.P.x + KalmanParamQ) / (measurement.P.x + KalmanParamQ + KalmanParamR);
-        measurement.K.y = (measurement.P.y + KalmanParamQ) / (measurement.P.y + KalmanParamQ + KalmanParamR);
-        measurement.K.z = (measurement.P.z + KalmanParamQ) / (measurement.P.z + KalmanParamQ + KalmanParamR);
-        measurement.P.x = KalmanParamR * (measurement.P.x + KalmanParamQ) / (measurement.P.x + KalmanParamQ + KalmanParamR);
-        measurement.P.y = KalmanParamR * (measurement.P.y + KalmanParamQ) / (measurement.P.y + KalmanParamQ + KalmanParamR);
-        measurement.P.z = KalmanParamR * (measurement.P.z + KalmanParamQ) / (measurement.P.z + KalmanParamQ + KalmanParamR);
-    }
-
     private void WristRotation()
     {
         switch (wristType)
@@ -806,6 +742,7 @@ public class CalculateRotAngle : MonoBehaviour
         Quaternion rot = Quaternion.AngleAxis(handPitch, Vector3.forward);
         HandJoint.boneTransform.localRotation = Quaternion.Inverse(HandJoint.parent.initRotation) * HandJoint.initRotation * rot * Quaternion.Slerp(rot, Quaternion.identity, 0.1f);
     }
+
     public float Map(float value, float i_from, float i_to, float o_from, float o_to)
     {
         if (value <= i_from)
@@ -830,6 +767,4 @@ public class CalculateRotAngle : MonoBehaviour
         LowerArmJoint.boneTransform.rotation = Quaternion.Inverse(Qtemp) * LowerArmJoint.boneTransform.rotation;
         HandJoint.boneTransform.rotation = Qtemp * HandJoint.boneTransform.rotation;
     }
-
-
 }

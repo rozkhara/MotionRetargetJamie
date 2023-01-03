@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
 
-public class CreateEETarget : MonoBehaviour
+public class JacobianIK : MonoBehaviour
 {    
     private LegacyMatrix JacobianA;
     private LegacyMatrix InverseA;
@@ -18,7 +18,6 @@ public class CreateEETarget : MonoBehaviour
     private float Sarm, arm, Sleg, leg;
     private float smoothParam = 0.6f;
 
-    //LegacyMatrix SelectMat;
     private int JointCount;
     private Quaternion[] prevRot;
 
@@ -29,7 +28,6 @@ public class CreateEETarget : MonoBehaviour
     public Transform Root; //targetRot¿« Cha_Hips
     public Transform[] Joints;
 
-    // Start is called before the first frame update
     void Start()
     {
         Joints = Root.GetComponentsInChildren<Transform>();

@@ -32,10 +32,6 @@ public class TposeAlignment : MonoBehaviour
 {
     public Transform rootNode;           //최종 source skeleton의 transform
     public Transform[] childNodes;
-    //public List<Quaternion> perJointRotSourceGlobal;     //Rr G
-    //public List<Quaternion> perJointRotSourceLocal;    //qr init
-    //public List<Quaternion> perJointRotTargetGlobal;     //Rd G
-    //public List<Quaternion> perJointRotTargetLocal;    //qd init
     public bool flag = true;
 
     public Transform t_rootNode;         //target skeleton의 transform (원본 Chr_Hips)
@@ -202,21 +198,6 @@ public class TposeAlignment : MonoBehaviour
                 calcTransform((int)s, child);
             }
         }
-
-
-        //qPre, qPost 계산을 위한 값
-        /*
-        for (int i = 0; i < childNodes.Length; i++)
-        {
-            perJointRotSourceGlobal.Add(childNodes[i].rotation);
-            perJointRotSourceLocal.Add(childNodes[i].localRotation);
-        }
-        for (int i = 0; i < t_childNodes.Length; i++)
-        {
-            perJointRotTargetGlobal.Add(t_childNodes[i].rotation);
-            perJointRotTargetLocal.Add(t_childNodes[i].localRotation);
-        }
-        */
     }
 
     void calcTransform(int bone, Transform child)
