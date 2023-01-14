@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SourceBoneIndex : int //부모에서 해당 joint까지의 뼈
+public enum SourceBoneIndex : int
 {
     spine = 0,
     chest,
@@ -30,11 +30,11 @@ public enum SourceBoneIndex : int //부모에서 해당 joint까지의 뼈
 
 public class TposeAlignment : MonoBehaviour
 {
-    public Transform rootNode;           //최종 source skeleton의 transform
+    public Transform rootNode;           // transform of source skeleton
     public Transform[] childNodes;
     public bool flag = true;
 
-    public Transform t_rootNode;         //target skeleton의 transform (원본 Chr_Hips)
+    public Transform t_rootNode;         // transform of target skeleton (Chr_Hips)
     public Transform[] t_childNodes;
 
     public class Bone
@@ -89,7 +89,7 @@ public class TposeAlignment : MonoBehaviour
 
     void Init()
     {
-        //pose text에서 bone의 길이 가져오기
+        // get the length of the bone from the pose text
         SourceBones[(int)SourceBoneIndex.spine].BoneLength = Vector3.Distance(a.firstTransform[0], a.firstTransform[7]);
         SourceBones[(int)SourceBoneIndex.chest].BoneLength = Vector3.Distance(a.firstTransform[7], a.firstTransform[8]);
         SourceBones[(int)SourceBoneIndex.neck].BoneLength = Vector3.Distance(a.firstTransform[8], a.firstTransform[9]);
@@ -113,7 +113,8 @@ public class TposeAlignment : MonoBehaviour
 
         if (globalBasis)
         {
-            //target skeleton의 정보를 받아와서 bone의 orientation 반영 (localPosition을 이용해 자식의 부모기준 위치를 받아옴)
+            // reflect the orientation of the bone by receiving the target skeleton information
+            // (using localPosition to receive the parent relative position of the child)
             SourceBones[(int)SourceBoneIndex.spine].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Hips].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Hips].position);
             SourceBones[(int)SourceBoneIndex.chest].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Spine].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Spine].position);
             SourceBones[(int)SourceBoneIndex.neck].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(5).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].position);  //원본에서 cape, wing 때문에 face가 5번 index
@@ -136,11 +137,12 @@ public class TposeAlignment : MonoBehaviour
                                                                                         - t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmR].position);
             SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_UpperArmL].position);
             SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].GetChild(0).position - t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].position);
-            //target과 source skeleton의 위상이 다르므로, 양 UpperArm은 서로의 좌표를 이용해 구함
+            // since the target and source skeleton have different topology, both UpperArms are obtained using each other's coordinates.
         }
         else
         {
-            //target skeleton의 정보를 받아와서 bone의 orientation 반영 (localPosition을 이용해 자식의 부모기준 위치를 받아옴)
+            // reflect target skeleton to the orientation of the bone
+            // (using localPosition to receive the parent relative position of the child)
             SourceBones[(int)SourceBoneIndex.spine].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Hips].GetChild(0).localPosition);
             SourceBones[(int)SourceBoneIndex.chest].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Spine].GetChild(0).localPosition);
             SourceBones[(int)SourceBoneIndex.neck].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].GetChild(5).localPosition);  //원본에서 cape, wing 때문에 face가 5번 index
@@ -164,7 +166,7 @@ public class TposeAlignment : MonoBehaviour
             SourceBones[(int)SourceBoneIndex.lLowerArm].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_LowerArmL].GetChild(0).localPosition);
             SourceBones[(int)SourceBoneIndex.lHand].orientation = Vector3.Normalize(t_childNodes[(int)Constants.TargetPositionIndex.Cha_HandL].GetChild(0).localPosition);  //target과 source skeleton의 위상이 다르므로, 양 UpperArm은 서로의 좌표를 이용해 구함
 
-            //basis 일치를 위해 rotation 값 가져오기
+            // get rotation value for basis match
             rootNode.rotation = t_childNodes[(int)Constants.TargetPositionIndex.Cha_Hips].rotation;
             SourceBones[(int)SourceBoneIndex.spine].rotation = t_childNodes[(int)Constants.TargetPositionIndex.Cha_Spine].rotation;
             SourceBones[(int)SourceBoneIndex.chest].rotation = t_childNodes[(int)Constants.TargetPositionIndex.Cha_Chest].rotation;
@@ -189,7 +191,7 @@ public class TposeAlignment : MonoBehaviour
         }
 
 
-        //뼈의 길이와 방향 정보를 이용해 각 transform의 position 결정
+        // determine the position of each transform using bone length and orientation information
         foreach (Transform child in childNodes)
         {
             if (!child.name.Contains("Tpose") && !child.name.Contains("base"))

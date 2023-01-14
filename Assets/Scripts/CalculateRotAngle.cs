@@ -38,9 +38,9 @@ public class CalculateRotAngle : MonoBehaviour
 
     public enum WristType
     {
-        FoldContinuation,   //윗팔과 아랫팔 관절이 굽어진 정도에 따라 손목의 pitch값을 조정하는 방법
-        Momentum,           //손목 관절의 속도에 따라 손목에도 관성을 주는 방법
-        NewVectorBlend,      //아랫팔과 윗팔 관절 각각에서 손목 관절로 향하는 백터를 blend 하는 방법
+        FoldContinuation,   // using the rotation of UpperArm and LowerArm to update wrist joints' pitch value
+        Momentum,           // using wrist joints' velocity to set its rotation based on its momentum
+        NewVectorBlend,     // blending two vectors from wrist to elbow and shoulder joint
         Off
     };
     [SerializeField] private WristType wristType = new();

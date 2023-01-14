@@ -25,7 +25,7 @@ public class JacobianIK : MonoBehaviour
     public Transform SRoot;
     public Transform[] SJoints;
 
-    public Transform Root; //targetRot의 Cha_Hips
+    public Transform Root; // targetRot's Cha_Hips
     public Transform[] Joints;
 
     void Start()
@@ -76,7 +76,7 @@ public class JacobianIK : MonoBehaviour
         int count = JointCount;
         //int iteration = 0;
 
-        while (count != 0) // update된 joint가 없으면(delta 값이 threshold보다 작으면) iteration 종료
+        while (count != 0) // if there is no updated point (delta value for all joints are less than threshold), exit initiation
         {
             Vector3 error = new Vector3();
             for (int i = 0; i < EEindex.Length; i++)
@@ -106,7 +106,7 @@ public class JacobianIK : MonoBehaviour
         }
     }
 
-    int UpdateRot(float s) // update한 joint 수를 반환
+    int UpdateRot(float s) // returns the number of points updated
     {
         int count = 0;
         float threshold = 0.05f;
@@ -123,7 +123,7 @@ public class JacobianIK : MonoBehaviour
         return count;
     }
 
-    void UpdateTargetPos(Transform eePos, Transform nextPos) // end-effector의 다음 target 위치를 update
+    void UpdateTargetPos(Transform eePos, Transform nextPos) // update next target position of end-effector
     {
         if (IsInitialized)
         {
@@ -146,24 +146,24 @@ public class JacobianIK : MonoBehaviour
         eePos.position = Root.position + (nextPos.position - SRoot.position) * scale;
     }
 
-    void JacobianMatrix() // tee : end-effector의 target 위치, see : end-effector에 해당하는 joint(손, 발)
+    void JacobianMatrix()
     {
         for (int i = 0; i < EEindex.Length; i++)
         {
-            Transform tee = EESphere[i].transform;
-            Transform see = Joints[EEindex[i]];
+            Transform tee = EESphere[i].transform;  // tee : target position of end-effector
+            Transform see = Joints[EEindex[i]];     // see : end-effector joint (hand, foot)
             Transform temp = see.transform.parent;
-            while (temp.childCount <= 1) // temp가 여러 end-effector가 공유하는 joint가 아니라면 
+            while (temp.childCount <= 1) // if temp is not a joint shared by multiple end-effectors,
             {
-                // Joints 배열에서 temp의 index 번호(j) 찾기
+                // find the index number (j) of temp in the Joints array
                 for (int j = 0; j < JointCount; j++)
                 {
                     if (temp.name == Joints[j].name)
                     {
-                        // delta 각을 계산하기 위한 회전축을 tee, see, temp가 존재하는 평면의 법선으로 설정
+                        // set the axis of rotation for calculating delta angle to the normal line of the plane where tee, see, temp exist 
                         Vector3 norm = Vector3.Cross(tee.position - see.position, see.position - temp.position).normalized;
                         rotateAxis[j] = norm;
-                        // JacobianA 행렬의 각 element를 공식에 따라 계산
+                        // calculate each element of the JacobianA matrix according to the formula                       
                         Vector3 elementJ = Vector3.Cross(norm, (see.position - temp.position));
                         JacobianA[i * 3 + 0, j] = elementJ.x;
                         JacobianA[i * 3 + 1, j] = elementJ.y;
