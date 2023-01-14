@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -287,7 +287,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 27c007ebde1a0dc40b36e519951d163a, type: 2}
     - target: {fileID: -8679921383154817045, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1211,10 +1211,8 @@ MonoBehaviour:
   wristType: 3
   wristBlendParam: 0.5
   meshBlendParam: 0.5
-  KalmanParamQ: 0
-  KalmanParamR: 0
-  IsFilterOn: 0
   IsSourceSkelOn: 0
+  IsTrackingOn: 0
   IsNeckRotationOn: 0
   IsFVRotationOn: 1
 --- !u!4 &1155311530
@@ -1230,7 +1228,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1157723981 stripped
 Transform:
@@ -1279,78 +1277,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -3243470405084817672, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
   m_PrefabInstance: {fileID: 1835193851}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1234845706
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1234845708}
-  - component: {fileID: 1234845707}
-  - component: {fileID: 1234845709}
-  m_Layer: 0
-  m_Name: OMRTest
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1234845707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234845706}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a116ff757cd11cf4980c7d3e6b95e139, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Kfactor: 150
-  Root: {fileID: 8659224940084568337, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
-  Joints: []
-  EndEffector: []
-  PreEndEffector: []
-  errorP: []
-  dsrc: []
---- !u!4 &1234845708
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234845706}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8192396, y: -0.054836154, z: 8.597995}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1234845709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234845706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dc94366565aa5f42bc891f0734c04d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  JointCount: 0
-  testPoints: []
-  initLocalRot: []
-  initRot: []
-  Root: {fileID: 1835193852}
-  Joints: []
-  TRoot: {fileID: 8659224940084568337, guid: 18614a6fab93fa440b70fd147dc640de, type: 3}
-  TJoints: []
 --- !u!1 &1236835135
 GameObject:
   m_ObjectHideFlags: 0
@@ -1459,7 +1385,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1367494817
 GameObject:
@@ -1787,10 +1713,8 @@ MonoBehaviour:
   wristType: 3
   wristBlendParam: 0.5
   meshBlendParam: 0.5
-  KalmanParamQ: 0
-  KalmanParamR: 0
-  IsFilterOn: 0
   IsSourceSkelOn: 0
+  IsTrackingOn: 0
   IsNeckRotationOn: 0
   IsFVRotationOn: 1
 --- !u!114 &1714372485
