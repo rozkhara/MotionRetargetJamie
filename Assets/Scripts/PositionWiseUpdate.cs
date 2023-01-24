@@ -18,7 +18,6 @@ public class PositionWiseUpdate : MonoBehaviour
     public List<Vector3> newTransform;
     public List<Vector3> firstTransform;
 
-    //private bool powerSwitch = true;
 
 
     private void Awake()

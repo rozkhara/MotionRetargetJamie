@@ -111,6 +111,11 @@ public class CalculateRotAngle : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initializes each joint's information to follow the JointPoint structure
+    /// Designed specifically for target skeleton (output with mesh)
+    /// </summary>
+    /// <returns></returns>
     public JointPoint[] Init()
     {
         jointPoints = new JointPoint[(int)Constants.TargetPositionIndex.Count];
@@ -228,6 +233,12 @@ public class CalculateRotAngle : MonoBehaviour
         return JointPoints;
     }
 
+    /// <summary>
+    /// Initializes each joint's information to follow the JointPoint structure
+    /// Designed specifically for source skeleton (input)
+    /// Not required if the source skeleton is not being used
+    /// </summary>
+    /// <returns></returns>
     public JointPoint[] Init_s()
     {
         s_jointPoints = new JointPoint[(int)Constants.SourcePositionIndex.Count];
@@ -321,6 +332,11 @@ public class CalculateRotAngle : MonoBehaviour
         return s_jointPoints;
     }
 
+
+    /// <summary>
+    /// Updates each joint's rotation based on the refreshed data by GetNT()
+    /// Designed specifically for target skeleton (output with mesh)
+    /// </summary>
     public void RotUpdate()
     {
         GetNT();
@@ -414,6 +430,11 @@ public class CalculateRotAngle : MonoBehaviour
         //Vector3 forward = TriangleNormal(jointPoints[(int)Constants.TargetPositionIndex.Cha_Spine], jointPoints[(int)Constants.TargetPositionIndex.Cha_UpperLegL], )
     }
 
+    /// <summary>
+    /// Updates each joint's rotation based on the refreshed data by GetNT()
+    /// Designed specifically for source skeleton (input)
+    /// Not required if the source skeleton is not being used
+    /// </summary>
     public void RotUpdate_s()
     {
         GetNT_s();
@@ -499,6 +520,11 @@ public class CalculateRotAngle : MonoBehaviour
         s_childNodes = s_rootNode.GetComponentsInChildren<Transform>();
     }
 
+
+    /// <summary>
+    /// Gets the parsed input data and refreshes jointPoints' position information
+    /// Designed specifically for target skeleton (output with mesh)
+    /// </summary>
     private void GetNT()
     {
         sData = DataProcess.Instance.GetSData();
@@ -607,6 +633,11 @@ public class CalculateRotAngle : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Gets the parsed input data and refreshes jointPoints' position information
+    /// Designed specifically for source skeleton (input)
+    /// Not required if the source skeleton is not being used
+    /// </summary>
     private void GetNT_s()
     {
         sData = DataProcess.Instance.GetSData();
